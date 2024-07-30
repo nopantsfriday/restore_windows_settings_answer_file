@@ -1,0 +1,1478 @@
+<?xml version="1.0" encoding="utf-8"?>
+<unattend xmlns="urn:schemas-microsoft-com:unattend" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
+	<!--https://schneegans.de/windows/unattend-generator/?LanguageMode=Unattended&UILanguage=en-US&Locale=de-DE&Keyboard=00000407&GeoLocation=94&ProcessorArchitecture=amd64&BypassRequirementsCheck=true&BypassNetworkCheck=true&ComputerNameMode=Custom&ComputerName=GAMING&TimeZoneMode=Implicit&PartitionMode=Interactive&WindowsEditionMode=Unattended&WindowsEdition=pro&UserAccountMode=Unattended&AccountName0=jens&AccountPassword0=jens&AccountGroup0=Administrators&AccountName1=&AccountName2=&AccountName3=&AccountName4=&AutoLogonMode=Own&PasswordExpirationMode=Unlimited&LockoutMode=Default&EnableLongPaths=true&EnableRemoteDesktop=true&HardenSystemDriveAcl=true&AllowPowerShellScripts=true&DisableAppSuggestions=true&DisableWidgets=true&ClassicContextMenu=true&WifiMode=Skip&ExpressSettings=DisableAll&Remove3DViewer=true&RemoveBingSearch=true&RemoveCamera=true&RemoveClipchamp=true&RemoveClock=true&RemoveCopilot=true&RemoveCortana=true&RemoveDevHome=true&RemoveFamily=true&RemoveFeedbackHub=true&RemoveGetHelp=true&RemoveInternetExplorer=true&RemoveMailCalendar=true&RemoveMaps=true&RemoveMathInputPanel=true&RemoveZuneVideo=true&RemoveNews=true&RemoveNotepadClassic=true&RemoveNotepad=true&RemoveOffice365=true&RemoveOneDrive=true&RemoveOneNote=true&RemoveOpenSSHClient=true&RemoveOutlook=true&RemovePaint=true&RemovePaint3D=true&RemovePeople=true&RemovePhotos=true&RemovePowerAutomate=true&RemoveQuickAssist=true&RemoveSkype=true&RemoveSnippingTool=true&RemoveSolitaire=true&RemoveStepsRecorder=true&RemoveStickyNotes=true&RemoveTeams=true&RemoveGetStarted=true&RemoveToDo=true&RemoveVoiceRecorder=true&RemoveWeather=true&RemoveWindowsMediaPlayer=true&RemoveZuneMusic=true&RemoveWordPad=true&RemoveYourPhone=true&SystemScript0=%23+Disable+Hibernate%0D%0Afunction+create_registry_key+%7B%0D%0A%0D%0A++if+%28%21%28Test-Path+%24registryPath%29%29+%7B%0D%0A++++New-Item+-Path+%24registryPath+-Force+%7C+Out-Null%0D%0A++++New-ItemProperty+-Name+%24name+-Path+%24registrypath+-Force+-PropertyType+%24registry_type+-Value+%24value+%7C+Out-Null%0D%0A++%7D%0D%0A++else+%7B%0D%0A++++New-ItemProperty+-Name+%24name+-Path+%24registrypath+-Force+-PropertyType+%24registry_type+-Value+%24value+%7C+Out-Null+%7C+Out-Null%0D%0A++%7D%0D%0A%7D%0D%0A%0D%0A%0D%0AWrite-Host+%22Disable+Hibernate%22+-ForegroundColor+Cyan%0D%0Apowercfg.exe+-h+off%0D%0A%24registryPath+%3D+%22HKLM%3A%5CSYSTEM%5CCurrentControlSet%5CControl%5CPower%22%0D%0A%24Name+%3D+%22HibernateEnabled%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0A%0D%0A%23+Enable+ICMP+ping%0D%0A%24firewallRuleName+%3D+%22File+and+Printer+Sharing+%28Echo+Request+-+ICMPv4-In%29%22%0D%0A%0D%0A%23+Check+if+the+firewall+rule+exists%0D%0A%24existingRule+%3D+Get-NetFirewallRule+%7C+Where-Object+%7B+%24_.DisplayName+-eq+%24firewallRuleName+%7D%0D%0A%0D%0Aif+%28%24existingRule+-eq+%24null%29+%7B%0D%0A++++Write-Host+%22Firewall+rule+not+found%3A+%24firewallRuleName%22%0D%0A%7D+else+%7B%0D%0A++++%23+Enable+the+firewall+rule%0D%0A++++Enable-NetFirewallRule+-DisplayName+%24firewallRuleName%0D%0A++++Write-Host+%22Firewall+rule+%27%24firewallRuleName%27+has+been+enabled.%22%0D%0A%7D%0D%0A%0D%0A++%23+Enable+the+Ultimate+Performance+power+plan%0D%0A++powercfg+-duplicatescheme+e9a42b02-d5df-448d-aa00-03f14749eb61%0D%0A++%0D%0A++%23+Set+the+Ultimate+Performance+power+plan+as+active%0D%0A++powercfg+-setactive+e9a42b02-d5df-448d-aa00-03f14749eb61%0D%0A%0D%0A%23+Uninstall+uselsee+Windows+optional+features%0D%0AWrite-Host+%22Disable+Windows+Optional+Features%22+-ForegroundColor+Cyan%0D%0ADisable-WindowsOptionalFeature+-Online+-NoRestart+-FeatureName+WindowsMediaPlayer+%7C+Out-Null%0D%0ADisable-WindowsOptionalFeature+%E2%80%93Online+-NoRestart+-FeatureName+SearchEngine-Client-Package+%7C+Out-Null%0D%0A%0D%0A%23+Disable+Defender+Auto+Sample+Submission%0D%0ASet-MpPreference+-SubmitSamplesConsent+2+-ErrorAction+Continue+%7C+Out-Null%0D%0A%0D%0A%23+List+of+Windows+services+to+deactivate%0D%0A%24ServicesToDeactivate+%3D+%40%28%0D%0A++%22RetailDemo%22%2C+++++++++++++++%23+Windows+Retail+Demo%0D%0A++%22icssvc%22%2C+++++++++++++++++++%23+Windows+Mobile+Hotspot%0D%0A++%22PhoneSvc%22%2C+++++++++++++++++%23+PhoneService%0D%0A++%22WbioSrvc%22%2C+++++++++++++++++%23+Biometric+Services%0D%0A++%22WSearch%22%2C++++++++++++++++++%23+Windows+Search+%28sucks+anyway%29%0D%0A++%22wisvc%22%2C++++++++++++++++++++%23+Windows+Insider+Service%0D%0A++%22WerSvc%22%2C+++++++++++++++++++%23+Windows+Error+Reporting%0D%0A++%22RemoteRegistry%22%2C+++++++++++%23+Remote+Registry%0D%0A++%22TabletInputService%22%2C+++++++%23+Touch+Keyboard+and+Handwriting+Panel+Service%0D%0A++%22Fax%22%2C++++++++++++++++++++++%23+Windows+Fax%0D%0A++%22DiagTrack%22%2C++++++++++++++++%23+Connected+User+Experiences+and+Telemetry%0D%0A++%22MapsBroker%22++++++++++++++++%23+Downloaded+Maps+Manager%0D%0A%29%0D%0A%0D%0A%0D%0A%23+Loop+through+each+service+and+attempt+to+deactivate+it%0D%0Aforeach+%28%24ServiceName+in+%24ServicesToDeactivate%29+%7B%0D%0A++try+%7B%0D%0A++++%23+Get+the+service%2C+and+if+it+exists%2C+set+its+startup+type+to+Disabled+and+stop+it%0D%0A++++%24Service+%3D+Get-Service+-Name+%24ServiceName+-ErrorAction+Stop%0D%0A++++Write-Host+%22Deactivating+service+%24ServiceName%22+-ForegroundColor+Cyan%0D%0A++++%24Service+%7C+Set-Service+-StartupType+Disabled+-PassThru+%7C+Stop-Service+-Force%0D%0A++%7D+catch+%7B%0D%0A++++%23+Handle+the+case+where+the+service+does+not+exist%0D%0A++++Write-Host+%22%24ServiceName+does+not+exist%22+-ForegroundColor+Yellow%0D%0A++%7D%0D%0A%7D%0D%0A%0D%0A%23+Disables+Windows+Consumer+Features+Like+App+Promotions+etc.%0D%0Areg.exe+add+%22HKLM%5CSoftware%5CPolicies%5CMicrosoft%5CWindows%5CCloudContent%22+%2Fv+%22DisableWindowsConsumerFeatures%22+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A%23+Disables+News+and+Interests%0D%0Areg.exe+add+%22HKLM%5CSOFTWARE%5CPolicies%5CMicrosoft%5CDsh%22+%2Fv+AllowNewsAndInterests+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A%23+Disables+Windows+Consumer+Features+Like+App+Promotions+etc.%0D%0Areg.exe+add+%22HKLM%5CSoftware%5CPolicies%5CMicrosoft%5CWindows%5CCloudContent%22+%2Fv+%22DisableWindowsConsumerFeatures%22+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A%23+Disables+Location+Tracking%0D%0Areg.exe+add+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CCapabilityAccessManager%5CConsentStore%5Clocation%22+%2Fv+Value+%2Ft+REG_SZ+%2Fd+Deny+%2Ff%0D%0Areg.exe+add+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows+NT%5CCurrentVersion%5CSensor%5COverrides%5C%7BBFA794E4-F964-4FDB-90F6-51056BFE4B44%7D%22+%2Fv+SensorPermissionState+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0Areg.exe+add+%22HKLM%5CSYSTEM%5CCurrentControlSet%5CServices%5Clfsvc%5CService%5CConfiguration%22+%2Fv+Status+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0Areg.exe+add+%22HKLM%5CSYSTEM%5CMaps%22+%2Fv+AutoUpdateEnabled+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A%23+Disables+Telemetry%0D%0Areg.exe+add+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CPolicies%5CDataCollection%22+%2Fv+AllowTelemetry+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0Areg.exe+add+%22HKLM%5CSOFTWARE%5CPolicies%5CMicrosoft%5CWindows%5CDataCollection%22+%2Fv+AllowTelemetry+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A++%0D%0A++%23+Disable+Scheduled+Tasks%0D%0A++%24scheduledTasks+%3D+%40%28%0D%0A++++++%22Microsoft%5CWindows%5CApplication+Experience%5CMicrosoft+Compatibility+Appraiser%22%2C%0D%0A++++++%22Microsoft%5CWindows%5CApplication+Experience%5CProgramDataUpdater%22%2C%0D%0A++++++%22Microsoft%5CWindows%5CAutochk%5CProxy%22%2C%0D%0A++++++%22Microsoft%5CWindows%5CCustomer+Experience+Improvement+Program%5CConsolidator%22%2C%0D%0A++++++%22Microsoft%5CWindows%5CCustomer+Experience+Improvement+Program%5CUsbCeip%22%2C%0D%0A++++++%22Microsoft%5CWindows%5CDiskDiagnostic%5CMicrosoft-Windows-DiskDiagnosticDataCollector%22%2C%0D%0A++++++%22Microsoft%5CWindows%5CFeedback%5CSiuf%5CDmClient%22%2C%0D%0A++++++%22Microsoft%5CWindows%5CFeedback%5CSiuf%5CDmClientOnScenarioDownload%22%2C%0D%0A++++++%22Microsoft%5CWindows%5CWindows+Error+Reporting%5CQueueReporting%22%2C%0D%0A++++++%22Microsoft%5CWindows%5CApplication+Experience%5CMareBackup%22%2C%0D%0A++++++%22Microsoft%5CWindows%5CApplication+Experience%5CStartupAppTask%22%2C%0D%0A++++++%22Microsoft%5CWindows%5CApplication+Experience%5CPcaPatchDbTask%22%2C%0D%0A++++++%22Microsoft%5CWindows%5CMaps%5CMapsUpdateTask%22%0D%0A++%29%0D%0A++foreach+%28%24task+in+%24scheduledTasks%29+%7B%0D%0A++++++schtasks+%2FChange+%2FTN+%24task+%2FDisable%0D%0A++%7D%0D%0A%0D%0A%23+Disables+Windows+Ink+Workspace%0D%0Areg.exe+add+%22HKLM%5CSOFTWARE%5CPolicies%5CMicrosoft%5CWindowsInkWorkspace%22+%2Fv+AllowWindowsInkWorkspace+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A%23+Disables+Feedback+Notifications%0D%0Areg.exe+add+%22HKLM%5CSOFTWARE%5CPolicies%5CMicrosoft%5CWindows%5CDataCollection%22+%2Fv+DoNotShowFeedbackNotifications+%2Ft+REG_DWORD+%2Fd+1+%2Ff%0D%0A%0D%0A%23+Disables+the+Advertising+ID+for+All+Users%0D%0Areg.exe+add+%22HKLM%5CSOFTWARE%5CPolicies%5CMicrosoft%5CWindows%5CAdvertisingInfo%22+%2Fv+DisabledByGroupPolicy+%2Ft+REG_DWORD+%2Fd+1+%2Ff%0D%0A%0D%0A%23+Disables+Windows+Error+Reporting%0D%0Areg.exe+add+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows%5CWindows+Error+Reporting%22+%2Fv+Disabled+%2Ft+REG_DWORD+%2Fd+1+%2Ff%0D%0A%0D%0A%23+Disables+Delivery+Optimization%0D%0Areg.exe+add+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CDeliveryOptimization%5CConfig%22+%2Fv+DODownloadMode+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A%23+Disables+Remote+Assistance%0D%0Areg.exe+add+%22HKLM%5CSYSTEM%5CCurrentControlSet%5CControl%5CRemote+Assistance%22+%2Fv+fAllowToGetHelp+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A%23+Search+Windows+Update+for+Drivers+First%0D%0Areg.exe+add+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CDriverSearching%22+%2Fv+SearchOrderConfig+%2Ft+REG_DWORD+%2Fd+1+%2Ff%0D%0A%0D%0A%23+Gives+Multimedia+Applications+like+Games+and+Video+Editing+a+Higher+Priority%0D%0Areg.exe+add+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows+NT%5CCurrentVersion%5CMultimedia%5CSystemProfile%22+%2Fv+SystemResponsiveness+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0Areg.exe+add+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows+NT%5CCurrentVersion%5CMultimedia%5CSystemProfile%22+%2Fv+NetworkThrottlingIndex+%2Ft+REG_DWORD+%2Fd+4294967295+%2Ff%0D%0A%0D%0A%23+Controls+whether+the+memory+page+file+is+cleared+at+shutdown.+Value+0+means+it+will+not+be+cleared%2C+speeding+up+shutdown.%0D%0Areg.exe+add+%22HKLM%5CSYSTEM%5CCurrentControlSet%5CControl%5CSession+Manager%5CMemory+Management%22+%2Fv+ClearPageFileAtShutdown+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A%23+Enables+NDU+%28Network+Diagnostic+Usage%29+Service+on+Startup%0D%0Areg.exe+add+%22HKLM%5CSYSTEM%5CControlSet001%5CServices%5CNdu%22+%2Fv+Start+%2Ft+REG_DWORD+%2Fd+2+%2Ff%0D%0A%0D%0A%23+Increases+IRP+stack+size+to+30+for+the+LanmanServer+service+to+Improve+Network+Performance+and+Stability%0D%0Areg.exe+add+%22HKLM%5CSYSTEM%5CCurrentControlSet%5CServices%5CLanmanServer%5CParameters%22+%2Fv+IRPStackSize+%2Ft+REG_DWORD+%2Fd+30+%2Ff%0D%0A%0D%0A%23+Hides+the+Meet+Now+Button+on+the+Taskbar%0D%0Areg.exe+add+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CPolicies%5CExplorer%22+%2Fv+HideSCAMeetNow+%2Ft+REG_DWORD+%2Fd+1+%2Ff%0D%0A%0D%0A%23+Gives+Graphics+Cards+a+Higher+Priority+for+Gaming%0D%0Areg.exe+add+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows+NT%5CCurrentVersion%5CMultimedia%5CSystemProfile%5CTasks%5CGames%22+%2Fv+%22GPU+Priority%22+%2Ft+REG_DWORD+%2Fd+8+%2Ff%0D%0A%0D%0A%23+Gives+the+CPU+a+Higher+Priority+for+Gaming%0D%0Areg.exe+add+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows+NT%5CCurrentVersion%5CMultimedia%5CSystemProfile%5CTasks%5CGames%22+%2Fv+Priority+%2Ft+REG_DWORD+%2Fd+6+%2Ff%0D%0A%0D%0A%23+Gives+Games+a+higher+priority+in+the+system%27s+scheduling%0D%0Areg.exe+add+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows+NT%5CCurrentVersion%5CMultimedia%5CSystemProfile%5CTasks%5CGames%22+%2Fv+%22Scheduling+Category%22+%2Ft+REG_SZ+%2Fd+%22High%22+%2Ff%0D%0A%0D%0A%23+Fix+Managed+by+your+organization+in+Edge%0D%0Areg.exe+delete+%22HKLM%5CSOFTWARE%5CPolicies%5CMicrosoft%5CEdge%22+%2Ff%0D%0A%0D%0A%23+Set+Registry+Keys+to+Disable+Wifi-Sense%0D%0Areg.exe+add+%22HKLM%5CSoftware%5CMicrosoft%5CPolicyManager%5Cdefault%5CWiFi%5CAllowWiFiHotSpotReporting%22+%2Fv+Value+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0Areg.exe+add+%22HKLM%5CSoftware%5CMicrosoft%5CPolicyManager%5Cdefault%5CWiFi%5CAllowAutoConnectToWiFiSenseHotspots%22+%2Fv+Value+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A%23+Disables+Storage+Sense%0D%0Areg.exe+add+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CStorageSense%5CParameters%5CStoragePolicy%22+%2Fv+01+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A%23+DELETES+SCHEDULED+TASKS+REGISTRY+KEYS%0D%0A%23+Deleting+Application+Compatibility+Appraiser%0D%0Areg.exe+delete+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows+NT%5CCurrentVersion%5CSchedule%5CTaskCache%5CTasks%5C%7B0600DD45-FAF2-4131-A006-0B17509B9F78%7D%22+%2Ff%0D%0A%23+Deleting+Customer+Experience+Improvement+Program%0D%0Areg.exe+delete+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows+NT%5CCurrentVersion%5CSchedule%5CTaskCache%5CTasks%5C%7B4738DE7A-BCC1-4E2D-B1B0-CADB044BFA81%7D%22+%2Ff%0D%0Areg.exe+delete+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows+NT%5CCurrentVersion%5CSchedule%5CTaskCache%5CTasks%5C%7B6FAC31FA-4A85-4E64-BFD5-2154FF4594B3%7D%22+%2Ff%0D%0Areg.exe+delete+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows+NT%5CCurrentVersion%5CSchedule%5CTaskCache%5CTasks%5C%7BFC931F16-B50A-472E-B061-B6F79A71EF59%7D%22+%2Ff%0D%0A%23+Deleting+Program+Data+Updater%0D%0Areg.exe+delete+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows+NT%5CCurrentVersion%5CSchedule%5CTaskCache%5CTasks%5C%7B0671EB05-7D95-4153-A32B-1426B9FE61DB%7D%22+%2Ff%0D%0A%23+Deleting+autochk+proxy%0D%0Areg.exe+delete+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows+NT%5CCurrentVersion%5CSchedule%5CTaskCache%5CTasks%5C%7B87BF85F4-2CE1-4160-96EA-52F554AA28A2%7D%22+%2Ff%0D%0Areg.exe+delete+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows+NT%5CCurrentVersion%5CSchedule%5CTaskCache%5CTasks%5C%7B8A9C643C-3D74-4099-B6BD-9C6D170898B1%7D%22+%2Ff%0D%0A%23+Deleting+QueueReporting%0D%0Areg.exe+delete+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows+NT%5CCurrentVersion%5CSchedule%5CTaskCache%5CTasks%5C%7BE3176A65-4E44-4ED3-AA73-3283660ACB9C%7D%22+%2Ff%0D%0A%0D%0A%23+Disables+Cortana%0D%0Areg.exe+add+%22HKLM%5CSoftware%5CPolicies%5CMicrosoft%5CWindows%5CWindows+Search%22+%2Fv+AllowCortana+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A%23+Disables+Hibernation%0D%0Areg.exe+add+%22HKLM%5CSystem%5CCurrentControlSet%5CControl%5CSession+Manager%5CPower%22+%2Fv+HibernateEnabled+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0Areg.exe+add+%22HKLM%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CFlyoutMenuSettings%22+%2Fv+ShowHibernateOption+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0Afunction+create_registry_key+%7B%0D%0A%0D%0A++if+%28%21%28Test-Path+%24registryPath%29%29+%7B%0D%0A++++New-Item+-Path+%24registryPath+-Force+%7C+Out-Null%0D%0A++++New-ItemProperty+-Name+%24name+-Path+%24registrypath+-Force+-PropertyType+%24registry_type+-Value+%24value+%7C+Out-Null%0D%0A++%7D%0D%0A++else+%7B%0D%0A++++New-ItemProperty+-Name+%24name+-Path+%24registrypath+-Force+-PropertyType+%24registry_type+-Value+%24value+%7C+Out-Null+%7C+Out-Null%0D%0A++%7D%0D%0A%7D%0D%0A%0D%0A%0D%0A%23Disable+Windows+10+fast+boot%0D%0A%24registryPath+%3D+%22HKLM%3A%5CSYSTEM%5CCurrentControlSet%5CControl%5CSession+Manager%5CPower%22%0D%0A%24Name+%3D+%22HiberbootEnabled%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%23Remove+Windows+desktop+background+image%0D%0A%24registryPath+%3D+%22HKLM%3A%5CSoftware%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CWallpapers%22%0D%0A%24Name+%3D+%22BackgroundType%22%0D%0A%24value+%3D+%221%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%23Disable+Windows+Hello+login+%28Enables+the+option+to+allow+the+automatic+login+without+a+password+to+Windows+in+netplwiz.+Useful+if+you+have+a+Bitlocker+password+anyway%29%0D%0A%24registryPath+%3D+%22HKLM%3A%5CSOFTWARE%5CMicrosoft%5CWindows+NT%5CCurrentVersion%5CPasswordLess%5CDevice%22%0D%0A%24Name+%3D+%22DevicePasswordLessBuildVersion%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%23Disable+Windows+login+background+image%0D%0A%24registryPath+%3D+%22HKLM%3A%5CSOFTWARE%5CPolicies%5CMicrosoft%5CWindows%5CPersonalization%22%0D%0A%24Name+%3D+%22Nolockscreen%22%0D%0A%24value+%3D+%221%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%23Disable+GameDVR+and+Game+Bar%0D%0A%24registryPath+%3D+%22HKLM%3A%5CSOFTWARE%5CPolicies%5CMicrosoft%5CWindows%5CGameDVR%22%0D%0A%24Name+%3D+%22GameDVR_Enabled%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%23Disable+Windows+Insider+Error+Message+Reporting%0D%0A%24registryPath+%3D+%22HKLM%3A%5CSOFTWARE%5CMicrosoft%5CWindowsSelfHost%5CUI%5CVisibility%22%0D%0A%24Name+%3D+%22DiagnosticErrorText%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%23Disable+Windows+Logon+Background+Image%0D%0A%24registryPath+%3D+%22HKLM%3A%5CSoftware%5CPolicies%5CMicrosoft%5CWindows%5CSystem%22%0D%0A%24Name+%3D+%22DisableLogonBackgroundImage%22%0D%0A%24value+%3D+%221%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Add+lockscreen+timeout+settings+to+power+saving+options%0D%0A%24registryPath+%3D+%22HKLM%3A%5CSYSTEM%5CCurrentControlSet%5CControl%5CPower%5CPowerSettings%5C7516b95f-f776-4464-8c53-06167f40cc99%5C8EC4B3A5-6868-48c2-BE75-4F3044BE88A7%22%0D%0A%24Name+%3D+%22Attributes%22%0D%0A%24value+%3D+%222%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%23Enable+verbose+status+messages+during+Windows+loading+screen%0D%0A%24registryPath+%3D+%22HKLM%3A%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CPolicies%5CSystem%22%0D%0A%24Name+%3D+%22verbosestatus%22%0D%0A%24value+%3D+%221%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%23Enable+GPU+hardware+scheduling%0D%0A%24registryPath+%3D+%22HKLM%3A%5CSYSTEM%5CCurrentControlSet%5CControl%5CGraphicsDrivers%22%0D%0A%24Name+%3D+%22HwSchMode%22%0D%0A%24value+%3D+%222%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%23Enable+GPU+variable+refresh+rate%0D%0A%24registryPath+%3D+%22HKLM%3A%5CSYSTEM%5CCurrentControlSet%5CControl%5CGraphicsDrivers%22%0D%0A%24Name+%3D+%22DirectXUserGlobalSettings%22%0D%0A%24value+%3D+%22VRROptimizeEnable%3D1%3B%22%0D%0A%24registry_type+%3D+%22String%22%0D%0Acreate_registry_key%0D%0A%0D%0A++%23+Set+Services+to+Manual%0D%0A++Write-Output+%27Set+Services+to+Manual%3A+Turns+a+bunch+of+system+services+to+manual+that+do+not+need+to+be+running+all+the+time.%27%0D%0A++Set-Service+-Name+%27AJRouter%27+-StartupType+Disabled+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27ALG%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27AppIDSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27AppMgmt%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27AppReadiness%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27AppVClient%27+-StartupType+Disabled+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27AppXSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27Appinfo%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27AssignedAccessManagerSvc%27+-StartupType+Disabled+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27AudioEndpointBuilder%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27AudioSrv%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27Audiosrv%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27AxInstSV%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27BDESVC%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27BFE%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27BITS%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27BTAGService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27BcastDVRUserService_*%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27BrokerInfrastructure%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27Browser%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27BthAvctpSvc%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27BthHFSrv%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27CDPSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27CDPUserSvc_*%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27COMSysApp%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27CaptureService_*%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27CertPropSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27ClipSVC%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27ConsentUxUserSvc_*%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27CoreMessagingRegistrar%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27CredentialEnrollmentManagerUserSvc_*%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27CryptSvc%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27CscService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27DPS%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27DcomLaunch%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27DcpSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27DevQueryBroker%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27DeviceAssociationBrokerSvc_*%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27DeviceAssociationService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27DeviceInstall%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27DevicePickerUserSvc_*%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27DevicesFlowUserSvc_*%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27Dhcp%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27DiagTrack%27+-StartupType+Disabled+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27DialogBlockingService%27+-StartupType+Disabled+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27DispBrokerDesktopSvc%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27DisplayEnhancementService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27DmEnrollmentSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27Dnscache%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27DoSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27DsSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27DsmSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27DusmSvc%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27EFS%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27EapHost%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27EntAppSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27EventLog%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27EventSystem%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27FDResPub%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27Fax%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27FontCache%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27FrameServer%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27FrameServerMonitor%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27GraphicsPerfSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27HomeGroupListener%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27HomeGroupProvider%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27HvHost%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27IEEtwCollectorService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27IKEEXT%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27InstallService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27InventorySvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27IpxlatCfgSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27KeyIso%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27KtmRm%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27LSM%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27LanmanServer%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27LanmanWorkstation%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27LicenseManager%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27LxpSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27MSDTC%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27MSiSCSI%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27MapsBroker%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27McpManagementService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27MessagingService_*%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27MicrosoftEdgeElevationService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27MixedRealityOpenXRSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27MpsSvc%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27MsKeyboardFilter%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27NPSMSvc_*%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27NaturalAuthentication%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27NcaSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27NcbService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27NcdAutoSetup%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27NetSetupSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27NetTcpPortSharing%27+-StartupType+Disabled+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27Netlogon%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27Netman%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27NgcCtnrSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27NgcSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27NlaSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27OneSyncSvc_*%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27P9RdrService_*%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27PNRPAutoReg%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27PNRPsvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27PcaSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27PeerDistSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27PenService_*%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27PerfHost%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27PhoneSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27PimIndexMaintenanceSvc_*%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27PlugPlay%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27PolicyAgent%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27Power%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27PrintNotify%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27PrintWorkflowUserSvc_*%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27ProfSvc%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27PushToInstall%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27QWAVE%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27RasAuto%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27RasMan%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27RemoteAccess%27+-StartupType+Disabled+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27RemoteRegistry%27+-StartupType+Disabled+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27RetailDemo%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27RmSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27RpcEptMapper%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27RpcLocator%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27RpcSs%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SCPolicySvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SCardSvr%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SDRSVC%27+-StartupType+Manual+-ErrorAction+Continue+%0D%0A++Set-Service+-Name+%27SEMgrSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SENS%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SNMPTRAP%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SNMPTrap%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SSDPSRV%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SamSs%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27ScDeviceEnum%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27Schedule%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SecurityHealthService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27Sense%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SensorDataService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SensorService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SensrSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SessionEnv%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SgrmBroker%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SharedAccess%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SharedRealitySvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27ShellHWDetection%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SmsRouter%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27Spooler%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SstpSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27StateRepository%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27StiSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27StorSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SysMain%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27SystemEventsBroker%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27TabletInputService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27TapiSrv%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27TermService%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27TextInputManagementService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27Themes%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27TieringEngineService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27TimeBroker%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27TimeBrokerSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27TokenBroker%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27TrkWks%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27TroubleshootingSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27TrustedInstaller%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27UI0Detect%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27UdkUserSvc_*%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27UevAgentService%27+-StartupType+Disabled+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27UmRdpService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27UnistoreSvc_*%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27UserDataSvc_*%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27UserManager%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27UsoSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27VGAuthService%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27VMTools%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27VSS%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27VacSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27VaultSvc%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27W32Time%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WEPHOSTSVC%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WFDSConMgrSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WMPNetworkSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WManSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WPDBusEnum%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WSService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WSearch%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WaaSMedicSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WalletService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WarpJITSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WbioSrvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27Wcmsvc%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WcsPlugInService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WdNisSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WdiServiceHost%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WdiSystemHost%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WebClient%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27Wecsvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WerSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WiaRpc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WinDefend%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WinHttpAutoProxySvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WinRM%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27Winmgmt%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WlanSvc%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WpcMonSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WpnService%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WpnUserService_*%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27WwanSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27XblAuthManager%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27XblGameSave%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27XboxGipSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27XboxNetApiSvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27autotimesvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27bthserv%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27camsvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27cbdhsvc_*%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27cloudidsvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27dcsvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27defragsvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27diagnosticshub.standardcollector.service%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27diagsvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27dmwappushservice%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27dot3svc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27edgeupdate%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27edgeupdatem%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27embeddedmode%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27fdPHost%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27fhsvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27gpsvc%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27hidserv%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27icssvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27iphlpsvc%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27lfsvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27lltdsvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27lmhosts%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27mpssvc%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27msiserver%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27netprofm%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27nsi%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27p2pimsvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27p2psvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27perceptionsimulation%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27pla%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27seclogon%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27shpamsvc%27+-StartupType+Disabled+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27smphost%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27spectrum%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27sppsvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27ssh-agent%27+-StartupType+Disabled+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27svsvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27swprv%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27tiledatamodelsvc%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27tzautoupdate%27+-StartupType+Disabled+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27uhssvc%27+-StartupType+Disabled+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27upnphost%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27vds%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27vm3dservice%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27vmicguestinterface%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27vmicheartbeat%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27vmickvpexchange%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27vmicrdv%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27vmicshutdown%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27vmictimesync%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27vmicvmsession%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27vmicvss%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27vmvss%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27wbengine%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27wcncsvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27webthreatdefsvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27webthreatdefusersvc_*%27+-StartupType+Automatic+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27wercplsupport%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27wisvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27wlidsvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27wlpasvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27wmiApSrv%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27workfolderssvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27wuauserv%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A++Set-Service+-Name+%27wudfsvc%27+-StartupType+Manual+-ErrorAction+Continue%0D%0A%0D%0A%23New-Item+-ItemType+File+-Path+%27C%3A%5Csystemcontext.txt%27&SystemScriptType0=Ps1&FirstLogonScript0=%3C%23+Disable+unnecessary+log+files+and+writes+to+SSD%0D%0A%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%0D%0A%23%3E%0D%0AWrite-Host+%22Disable+unnecessary+log+files+and+writes+to+SSD%22+-ForegroundColor+Cyan%0D%0A%0D%0Afunction+create_dummyfolder_file+%7B%0D%0A++param%28%24CheckPath%29%0D%0A++if+%28%28Test-Path+-LiteralPath+%24CheckPath%29+-ne+%24true%29+%7B+%0D%0A++++New-Item+-Path+%24CheckPath+-ItemType+File+-force+-ea+SilentlyContinue+%7C+Out-Null%3B+%0D%0A++++Write-Host+%22%24CheckPath%22+-BackgroundColor+Black+-ForegroundColor+Green+-NoNewline%3B+%0D%0A++++Write-Host+%22+was+created.%22+-ForegroundColor+White+-BackgroundColor+Black+%0D%0A++%7D+%0D%0A++else+%7B+%0D%0A++++Write-Host+%22%24CheckPath%22+-BackgroundColor+Black+-ForegroundColor+Yellow+-NoNewline%3B+%0D%0A++++Write-Host+%22+already+exists.%22+-ForegroundColor+White+-BackgroundColor+Black+%0D%0A++%7D%0D%0A%7D%0D%0A%0D%0A%24CheckPath+%3D+%27%7E%5CAppData%5CLocalLow%5CDeo+VR%27%0D%0Acreate_dummyfolder_file+-CheckPath+%24CheckPath%0D%0A%0D%0A%24CheckPath+%3D+%27%7E%5CAppData%5CLocalLow%5CDeoVR%27%0D%0Acreate_dummyfolder_file+-CheckPath+%24CheckPath%0D%0A%0D%0A%3C%23+Install+winget+and+software%0D%0A%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%2D%0D%0A%23%3E%0D%0A++winget.exe+install+-e+%2D%2Did+7zip.7zip%0D%0A++winget.exe+install+-e+%2D%2Did+Argotronic.ArgusMonitor%0D%0A++winget.exe+install+-e+%2D%2Did+Discord.Discord%0D%0A++winget.exe+install+-e+%2D%2Did+Elgato.StreamDeck%0D%0A++winget.exe+install+-e+%2D%2Did+Git.Git%0D%0A++winget.exe+install+-e+%2D%2Did+Google.Chrome%0D%0A++winget.exe+install+-e+%2D%2Did+Logitech.GHUB%0D%0A++winget.exe+install+-e+%2D%2Did+Microsoft.Edge%0D%0A++winget.exe+install+-e+%2D%2Did+Microsoft.PowerShell%0D%0A++winget.exe+install+-e+%2D%2Did+Microsoft.VisualStudioCode%0D%0A++winget.exe+install+-e+%2D%2Did+Microsoft.WindowsTerminal%0D%0A++winget.exe+install+-e+%2D%2Did+Mozilla.Firefox%0D%0A++winget.exe+install+-e+%2D%2Did+Nevcairiel.LAVFilters%0D%0A++winget.exe+install+-e+%2D%2Did+OpenWhisperSystems.Signal%0D%0A++winget.exe+install+-e+%2D%2Did+Spotify.Spotify%0D%0A++winget.exe+install+-e+%2D%2Did+VideoLAN.VLC%0D%0A%0D%0A%0D%0A%23+Hides+the+Meet+Now+Button+on+the+Taskbar%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CPolicies%5CExplorer%22+%2Fv+HideSCAMeetNow+%2Ft+REG_DWORD+%2Fd+1+%2Ff%0D%0A%0D%0A%23+Disables+Bing+Search+in+Start+Menu%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CPolicies%5CMicrosoft%5CWindows%5CExplorer%22+%2Fv+DisableSearchBoxSuggestions+%2Ft+REG_DWORD+%2Fd+1+%2Ff%0D%0A%0D%0A%23+Disables+Mouse+Acceleration%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CControl+Panel%5CMouse%22+%2Fv+MouseSpeed+%2Ft+REG_SZ+%2Fd+%220%22+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CControl+Panel%5CMouse%22+%2Fv+MouseThreshold1+%2Ft+REG_SZ+%2Fd+%220%22+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CControl+Panel%5CMouse%22+%2Fv+MouseThreshold2+%2Ft+REG_SZ+%2Fd+%220%22+%2Ff%0D%0A%0D%0A%23+Disables+Sticky+Keys%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CControl+Panel%5CAccessibility%5CStickyKeys%22+%2Fv+Flags+%2Ft+REG_SZ+%2Fd+%22506%22+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CControl+Panel%5CAccessibility%5CStickyKeys%22+%2Fv+HotkeyFlags+%2Ft+REG_SZ+%2Fd+%2258%22+%2Ff%0D%0A%0D%0A%23+Disables+Snap+Assist+Flyout%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSoftware%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CAdvanced%22+%2Fv+SnapAssist+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A%23+Enables+Show+File+Extensions%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSoftware%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CAdvanced%22+%2Fv+HideFileExt+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A%23+Enables+Dark+Mode%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CThemes%5CPersonalize%22+%2Fv+AppsUseLightTheme+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CThemes%5CPersonalize%22+%2Fv+ColorPrevalence+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CThemes%5CPersonalize%22+%2Fv+EnableTransparency+%2Ft+REG_DWORD+%2Fd+1+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CThemes%5CPersonalize%22+%2Fv+SystemUsesLightTheme+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A%0D%0A%23+Restore+Windows+Photo+Viewer+and+Set+as+Default+Program+for+Image+Files%0D%0A%23+Restore+Windows+Photo+Viewer%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CClasses%5C.bmp%22+%2Fve+%2Fd+%22PhotoViewer.FileAssoc.Tiff%22+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CClasses%5C.cr2%22+%2Fve+%2Fd+%22PhotoViewer.FileAssoc.Tiff%22+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CClasses%5C.dib%22+%2Fve+%2Fd+%22PhotoViewer.FileAssoc.Tiff%22+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CClasses%5C.gif%22+%2Fve+%2Fd+%22PhotoViewer.FileAssoc.Tiff%22+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CClasses%5C.ico%22+%2Fve+%2Fd+%22PhotoViewer.FileAssoc.Tiff%22+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CClasses%5C.jfif%22+%2Fve+%2Fd+%22PhotoViewer.FileAssoc.Tiff%22+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CClasses%5C.jpe%22+%2Fve+%2Fd+%22PhotoViewer.FileAssoc.Tiff%22+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CClasses%5C.jpeg%22+%2Fve+%2Fd+%22PhotoViewer.FileAssoc.Tiff%22+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CClasses%5C.jpg%22+%2Fve+%2Fd+%22PhotoViewer.FileAssoc.Tiff%22+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CClasses%5C.jxr%22+%2Fve+%2Fd+%22PhotoViewer.FileAssoc.Tiff%22+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CClasses%5C.png%22+%2Fve+%2Fd+%22PhotoViewer.FileAssoc.Tiff%22+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CClasses%5C.tif%22+%2Fve+%2Fd+%22PhotoViewer.FileAssoc.Tiff%22+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CClasses%5C.tiff%22+%2Fve+%2Fd+%22PhotoViewer.FileAssoc.Tiff%22+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CClasses%5C.wdp%22+%2Fve+%2Fd+%22PhotoViewer.FileAssoc.Tiff%22+%2Ff%0D%0A%23+Create+Relevant+File+Associations%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CFileExts%5C.bmp%5COpenWithProgids%22+%2Fv+%22PhotoViewer.FileAssoc.Tiff%22+%2Ft+REG_NONE+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CFileExts%5C.cr2%5COpenWithProgids%22+%2Fv+%22PhotoViewer.FileAssoc.Tiff%22+%2Ft+REG_NONE+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CFileExts%5C.dib%5COpenWithProgids%22+%2Fv+%22PhotoViewer.FileAssoc.Tiff%22+%2Ft+REG_NONE+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CFileExts%5C.gif%5COpenWithProgids%22+%2Fv+%22PhotoViewer.FileAssoc.Tiff%22+%2Ft+REG_NONE+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CFileExts%5C.ico%5COpenWithProgids%22+%2Fv+%22PhotoViewer.FileAssoc.Tiff%22+%2Ft+REG_NONE+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CFileExts%5C.jfif%5COpenWithProgids%22+%2Fv+%22PhotoViewer.FileAssoc.Tiff%22+%2Ft+REG_NONE+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CFileExts%5C.jpe%5COpenWithProgids%22+%2Fv+%22PhotoViewer.FileAssoc.Tiff%22+%2Ft+REG_NONE+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CFileExts%5C.jpeg%5COpenWithProgids%22+%2Fv+%22PhotoViewer.FileAssoc.Tiff%22+%2Ft+REG_NONE+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CFileExts%5C.jpg%5COpenWithProgids%22+%2Fv+%22PhotoViewer.FileAssoc.Tiff%22+%2Ft+REG_NONE+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CFileExts%5C.jxr%5COpenWithProgids%22+%2Fv+%22PhotoViewer.FileAssoc.Tiff%22+%2Ft+REG_NONE+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CFileExts%5C.png%5COpenWithProgids%22+%2Fv+%22PhotoViewer.FileAssoc.Tiff%22+%2Ft+REG_NONE+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CFileExts%5C.tif%5COpenWithProgids%22+%2Fv+%22PhotoViewer.FileAssoc.Tiff%22+%2Ft+REG_NONE+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CFileExts%5C.tiff%5COpenWithProgids%22+%2Fv+%22PhotoViewer.FileAssoc.Tiff%22+%2Ft+REG_NONE+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CFileExts%5C.wdp%5COpenWithProgids%22+%2Fv+%22PhotoViewer.FileAssoc.Tiff%22+%2Ft+REG_NONE+%2Ff%0D%0A%0D%0A%23+Disables+Windows+Recall+on+Copilot%2B+PC+-+Credit+Britec09%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSoftware%5CPolicies%5CMicrosoft%5CWindows%5CWindowsAI%22+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSoftware%5CPolicies%5CMicrosoft%5CWindows%5CWindowsAI%22+%2Fv+%22DisableAIDataAnalysis%22+%2Ft+REG_DWORD+%2Fd+1+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSoftware%5CPolicies%5CMicrosoft%5CWindows%5CWindows+AI%22+%2Fv+%22TurnOffSavingSnapshots%22+%2Ft+REG_DWORD+%2Fd+1+%2Ff%0D%0A%0D%0A%23+Disables+Wallpaper+JPEG+Quality+Reduction+in+Windows+10%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CControl+Panel%5CDesktop%22+%2Fv+JPEGImportQuality+%2Ft+REG_DWORD+%2Fd+100+%2Ff%0D%0A%0D%0A%23+Hides+and+Removes+News+and+Interests+from+PC+and+Taskbar%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CFeeds%22+%2Fv+ShellFeedsTaskbarViewMode+%2Ft+REG_DWORD+%2Fd+2+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CFeeds%22+%2Fv+ShellFeedsEnabled+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CPolicies%5CMicrosoft%5CWindows%5CWindows+Feeds%22+%2Fv+EnableFeeds+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A%23+Disables+Location+Services%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CPrivacy%22+%2Fv+LocationServicesEnabled+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A%23+Disables+Input+Personalization+Settings%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CPersonalization%5CSettings%22+%2Fv+AcceptedPrivacyPolicy+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CInputPersonalization%22+%2Fv+RestrictImplicitTextCollection+%2Ft+REG_DWORD+%2Fd+1+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CInputPersonalization%22+%2Fv+RestrictImplicitInkCollection+%2Ft+REG_DWORD+%2Fd+1+%2Ff%0D%0A%0D%0A%23+Disables+Automatic+Feedback+Sampling%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CFeedback%22+%2Fv+AutoSample+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CFeedback%22+%2Fv+ServiceEnabled+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A%23+Disables+Recent+Documents+Tracking%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CAdvanced%22+%2Fv+Start_TrackDocs+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A%23+Disable+%22Let+websites+provide+locally+relevant+content+by+accessing+my+language+list%22%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CControl+Panel%5CInternational%5CUser+Profile%22+%2Fv+HttpAcceptLanguageOptOut+%2Ft+REG_DWORD+%2Fd+1+%2Ff%0D%0A%0D%0A%23+Disables+%22Let+Windows+track+app+launches+to+improve+Start+and+search+results%22%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CAdvanced%22+%2Fv+Start_TrackProgs+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0A%23+Disables+Background+Apps%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CBackgroundAccessApplications%22+%2Fv+GlobalUserDisabled+%2Ft+REG_DWORD+%2Fd+1+%2Ff%0D%0A%0D%0A%23+Disables+App+Diagnostics%0D%0Areg.exe+add+%22HKEY_CURRENT_USER%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CAppDiagnostics%22+%2Fv+AppDiagnosticsEnabled+%2Ft+REG_DWORD+%2Fd+0+%2Ff%0D%0A%0D%0Afunction+create_registry_key+%7B%0D%0A%0D%0A++++if+%28%21%28Test-Path+%24registryPath%29%29+%7B%0D%0A++++++New-Item+-Path+%24registryPath+-Force+%7C+Out-Null%0D%0A++++++New-ItemProperty+-Name+%24name+-Path+%24registrypath+-Force+-PropertyType+%24registry_type+-Value+%24value+%7C+Out-Null%0D%0A++++%7D%0D%0A++++else+%7B%0D%0A++++++New-ItemProperty+-Name+%24name+-Path+%24registrypath+-Force+-PropertyType+%24registry_type+-Value+%24value+%7C+Out-Null+%7C+Out-Null%0D%0A++++%7D%0D%0A++%7D%0D%0A%0D%0A%24registryPath+%3D+%22HKCU%3A%5CControl+Panel%5CDesktop%22%0D%0A%24Name+%3D+%22WallPaper%22%0D%0A%24value+%3D+%22%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Small+Desktop+icons%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSoftware%5CMicrosoft%5CWindows%5CShell%5CBags%5C1%5CDesktop%22%0D%0A%24Name+%3D+%22IconSize%22%0D%0A%24value+%3D+%2236%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%23Disable+Windows+spotlight+features%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSoftware%5CPolicies%5CMicrosoft%5CWindows%5CCloudContent%22%0D%0A%24Name+%3D+%22DisableWindowsSpotlightFeatures%22%0D%0A%24value+%3D+%221%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%23Deactivate+sound+setting+communication+%27Reduce+the+volume+of+other+sounds+by+80%25%27%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSoftware%5CMicrosoft%5CMultimedia%5CAudio%22%0D%0A%24Name+%3D+%22UserDuckingPreference%22%0D%0A%24value+%3D+%223%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%23Explorer+launch+to+%22This+PC%22%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CAdvanced%22%0D%0A%24Name+%3D+%22LaunchTo%22%0D%0A%24value+%3D+%221%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Disable+Windows+Web+Search%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSoftware%5CMicrosoft%5CWindows%5CCurrentVersion%5CSearch%22%0D%0A%24Name+%3D+%22BingSearchEnabled%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSoftware%5CMicrosoft%5CWindows%5CCurrentVersion%5CSearch%22%0D%0A%24Name+%3D+%22CortanaConsent%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%23Disable+enhanced+pointer+precision%0D%0A%24registryPath+%3D+%22HKCU%3A%5CControl+Panel%5CMouse%22%0D%0A%24Name+%3D+%22MouseSpeed%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%24registryPath+%3D+%22HKCU%3A%5CControl+Panel%5CMouse%22%0D%0A%24Name+%3D+%22MouseThreshold1%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%24registryPath+%3D+%22HKCU%3A%5CControl+Panel%5CMouse%22%0D%0A%24Name+%3D+%22MouseThreshold2%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Enable+dark+mode%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CThemes%5CPersonalize%22%0D%0A%24Name+%3D+%22AppsUseLightTheme%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Explorer+tweaks%0D%0A%23+Show+all+taskbar+icons%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSoftware%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%22%0D%0A%24Name+%3D+%22EnableAutoTray%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Choose+%22Show+hidden+files%2C+folders%2C+and+drives%22%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSoftware%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CAdvanced%22%0D%0A%24Name+%3D+%22Hidden%22%0D%0A%24value+%3D+%221%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Uncheck+%22Hide+extensions+for+known+file+types%22%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSoftware%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CAdvanced%22%0D%0A%24Name+%3D+%22HideFileExt%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Uncheck+%22Hide+protected+operating+system+files+%28Recommended%29%22%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSoftware%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CAdvanced%22%0D%0A%24Name+%3D+%22ShowSuperHidden%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23ShowCortanaButton%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSoftware%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CAdvanced%22%0D%0A%24Name+%3D+%22ShowCortanaButton%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Disable+task+view+button%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSoftware%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CAdvanced%22%0D%0A%24Name+%3D+%22ShowTaskViewButton%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Small+taskbar+icons%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSoftware%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CAdvanced%22%0D%0A%24Name+%3D+%22TaskbarSmallIcons%22%0D%0A%24value+%3D+%221%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23disable+background+apps%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSoftware%5CMicrosoft%5CWindows%5CCurrentVersion%5CBackgroundAccessApplications%22%0D%0A%24Name+%3D+%22GlobalUserDisabled%22%0D%0A%24value+%3D+%221%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Enable+Windows+10+context+menu%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSoftware%5CClasses%5CCLSID%5C%7B86ca1aa0-34aa-4e8b-a509-50c905bae2a2%7D%5CInprocServer32%22%0D%0A%24Name+%3D+%22%28Default%29%22%0D%0A%24value+%3D+%22%22%0D%0A%24registry_type+%3D+%22String%22%0D%0Acreate_registry_key%0D%0A%0D%0A%23Show+accent+color+on+title+bars+and+windows%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSoftware%5CMicrosoft%5CWindows%5CDWM%22%0D%0A%24Name+%3D+%22ColorPrevalence%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22String%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Disable+ShowRecent+file+in+Explorer%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%22%0D%0A%24Name+%3D+%22ShowRecent%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Disable+ShowFrequent+file+in+Explorer%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSOFTWARE%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%22%0D%0A%24Name+%3D+%22ShowFrequent%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Enable+Nvidia+Sharpening%0D%0A%24registryPath+%3D+%22HKLM%3A%5CSYSTEM%5CCurrentControlSet%5CServices%5Cnvlddmkm%5CFTS%22%0D%0A%24Name+%3D+%22EnableGR535%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Disable+animations+in+Windows%0D%0A%24registryPath+%3D+%22HKCU%3A%5CControl+Panel%5CDesktop%5CWindowMetrics%22%0D%0A%24Name+%3D+%22MinAnimate%22%0D%0A%24value+%3D+%221%22%0D%0A%24registry_type+%3D+%22String%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Disable+transparancey%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSoftware%5CMicrosoft%5CWindows%5CCurrentVersion%5CThemes%5CPersonalize%22%0D%0A%24Name+%3D+%22EnableTransparency%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Disable+sticky+keys%0D%0A%24registryPath+%3D+%22HKCU%3A%5CControl+Panel%5CAccessibility%5CStickyKeys%22%0D%0A%24Name+%3D+%22Flags%22%0D%0A%24value+%3D+%22506%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Taskbar+Alignment+left%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSoftware%5CMicrosoft%5CWindows%5CCurrentVersion%5CExplorer%5CAdvanced%5C%22%0D%0A%24Name+%3D+%22TaskbarAl%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Disable+adverstising+id%0D%0A%24registryPath+%3D+%22HKCU%3A%5CSoftware%5CMicrosoft%5CWindows%5CCurrentVersion%5CAdvertisingInfo%22%0D%0A%24Name+%3D+%22Enabled%22%0D%0A%24value+%3D+%220%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%0D%0A%23Disable+websites+getting+access+to+language+list%0D%0A%24registryPath+%3D+%22HKCU%3A%5CControl+Panel%5CInternational%5CUser+Profile%22%0D%0A%24Name+%3D+%22HttpAcceptLanguageOptOut%22%0D%0A%24value+%3D+%221%22%0D%0A%24registry_type+%3D+%22DWORD%22%0D%0Acreate_registry_key%0D%0A%0D%0A%23New-Item+-ItemType+File+-Path+%27C%3A%5Cusercontext.txt%27%0D%0A%0D%0A%23+Restart+PC+to+Apply+All+Changes%0D%0Ashutdown+%2Fr+-t+1&FirstLogonScriptType0=Ps1&WdacMode=Skip-->
+	<settings pass="offlineServicing"></settings>
+	<settings pass="windowsPE">
+		<component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+			<SetupUILanguage>
+				<UILanguage>en-US</UILanguage>
+			</SetupUILanguage>
+			<InputLocale>0407:00000407</InputLocale>
+			<SystemLocale>de-DE</SystemLocale>
+			<UILanguage>en-US</UILanguage>
+			<UserLocale>de-DE</UserLocale>
+		</component>
+		<component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+			<UserData>
+				<ProductKey>
+					<Key>VK7JG-NPHTM-C97JM-9MPGT-3V66T</Key>
+				</ProductKey>
+				<AcceptEula>true</AcceptEula>
+			</UserData>
+			<RunSynchronous>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>1</Order>
+					<Path>reg.exe add "HKLM\SYSTEM\Setup\LabConfig" /v BypassTPMCheck /t REG_DWORD /d 1 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>2</Order>
+					<Path>reg.exe add "HKLM\SYSTEM\Setup\LabConfig" /v BypassSecureBootCheck /t REG_DWORD /d 1 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>3</Order>
+					<Path>reg.exe add "HKLM\SYSTEM\Setup\LabConfig" /v BypassRAMCheck /t REG_DWORD /d 1 /f</Path>
+				</RunSynchronousCommand>
+			</RunSynchronous>
+		</component>
+	</settings>
+	<settings pass="generalize"></settings>
+	<settings pass="specialize">
+		<component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+			<RunSynchronous>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>1</Order>
+					<Path>reg.exe add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OOBE" /v BypassNRO /t REG_DWORD /d 1 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>2</Order>
+					<Path>reg.exe load "HKU\DefaultUser" "C:\Users\Default\NTUSER.DAT"</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>3</Order>
+					<Path>reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\Runonce" /v "UninstallCopilot" /t REG_SZ /d "powershell.exe -NoProfile -Command \"Get-AppxPackage -Name 'Microsoft.Windows.Ai.Copilot.Provider' | Remove-AppxPackage;\"" /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>4</Order>
+					<Path>reg.exe add "HKU\DefaultUser\Software\Policies\Microsoft\Windows\WindowsCopilot" /v TurnOffWindowsCopilot /t REG_DWORD /d 1 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>5</Order>
+					<Path>reg.exe unload "HKU\DefaultUser"</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>6</Order>
+					<Path>reg.exe delete "HKLM\SOFTWARE\Microsoft\WindowsUpdate\Orchestrator\UScheduler_Oobe\DevHomeUpdate" /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>7</Order>
+					<Path>reg.exe load "HKU\DefaultUser" "C:\Users\Default\NTUSER.DAT"</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>8</Order>
+					<Path>reg.exe add "HKU\DefaultUser\Software\Microsoft\Notepad" /v ShowStoreBanner /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>9</Order>
+					<Path>reg.exe unload "HKU\DefaultUser"</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>10</Order>
+					<Path>cmd.exe /c "del "C:\Users\Default\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk""</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>11</Order>
+					<Path>cmd.exe /c "del "C:\Windows\System32\OneDriveSetup.exe""</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>12</Order>
+					<Path>cmd.exe /c "del "C:\Windows\SysWOW64\OneDriveSetup.exe""</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>13</Order>
+					<Path>reg.exe load "HKU\DefaultUser" "C:\Users\Default\NTUSER.DAT"</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>14</Order>
+					<Path>reg.exe delete "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\Run" /v OneDriveSetup /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>15</Order>
+					<Path>reg.exe unload "HKU\DefaultUser"</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>16</Order>
+					<Path>reg.exe delete "HKLM\SOFTWARE\Microsoft\WindowsUpdate\Orchestrator\UScheduler_Oobe\OutlookUpdate" /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>17</Order>
+					<Path>reg.exe add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Communications" /v ConfigureChatAutoInstall /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>18</Order>
+					<Path>powershell.exe -NoProfile -Command "$xml = [xml]::new(); $xml.Load('C:\Windows\Panther\unattend.xml'); $sb = [scriptblock]::Create( $xml.unattend.Extensions.ExtractScript ); Invoke-Command -ScriptBlock $sb -ArgumentList $xml;"</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>19</Order>
+					<Path>powershell.exe -NoProfile -Command "Get-Content -LiteralPath 'C:\Windows\Temp\remove-packages.ps1' -Raw | Invoke-Expression;"</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>20</Order>
+					<Path>powershell.exe -NoProfile -Command "Get-Content -LiteralPath 'C:\Windows\Temp\remove-caps.ps1' -Raw | Invoke-Expression;"</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>21</Order>
+					<Path>powershell.exe -NoProfile -Command "Get-Content -LiteralPath 'C:\Windows\Temp\remove-features.ps1' -Raw | Invoke-Expression;"</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>22</Order>
+					<Path>reg.exe add "HKLM\SOFTWARE\Microsoft\PolicyManager\current\device\Start" /v ConfigureStartPins /t REG_SZ /d "{ \"pinnedList\": [] }" /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>23</Order>
+					<Path>reg.exe add "HKLM\SOFTWARE\Microsoft\PolicyManager\current\device\Start" /v ConfigureStartPins_ProviderSet /t REG_DWORD /d 1 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>24</Order>
+					<Path>reg.exe add "HKLM\SOFTWARE\Microsoft\PolicyManager\current\device\Start" /v ConfigureStartPins_WinningProvider /t REG_SZ /d B5292708-1619-419B-9923-E5D9F3925E71 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>25</Order>
+					<Path>reg.exe add "HKLM\SOFTWARE\Microsoft\PolicyManager\providers\B5292708-1619-419B-9923-E5D9F3925E71\default\Device\Start" /v ConfigureStartPins /t REG_SZ /d "{ \"pinnedList\": [] }" /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>26</Order>
+					<Path>reg.exe add "HKLM\SOFTWARE\Microsoft\PolicyManager\providers\B5292708-1619-419B-9923-E5D9F3925E71\default\Device\Start" /v ConfigureStartPins_LastWrite /t REG_DWORD /d 1 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>27</Order>
+					<Path>net.exe accounts /maxpwage:UNLIMITED</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>28</Order>
+					<Path>reg.exe add "HKLM\SYSTEM\CurrentControlSet\Control\FileSystem" /v LongPathsEnabled /t REG_DWORD /d 1 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>29</Order>
+					<Path>netsh.exe advfirewall firewall set rule group="@FirewallAPI.dll,-28752" new enable=Yes</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>30</Order>
+					<Path>reg.exe add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>31</Order>
+					<Path>icacls.exe C:\ /remove:g "*S-1-5-11"</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>32</Order>
+					<Path>powershell.exe -NoProfile -Command "Set-ExecutionPolicy -Scope 'LocalMachine' -ExecutionPolicy 'RemoteSigned' -Force;"</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>33</Order>
+					<Path>reg.exe add "HKLM\SOFTWARE\Policies\Microsoft\Dsh" /v AllowNewsAndInterests /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>34</Order>
+					<Path>reg.exe load "HKU\DefaultUser" "C:\Users\Default\NTUSER.DAT"</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>35</Order>
+					<Path>reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "ContentDeliveryAllowed" /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>36</Order>
+					<Path>reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "FeatureManagementEnabled" /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>37</Order>
+					<Path>reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "OEMPreInstalledAppsEnabled" /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>38</Order>
+					<Path>reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "PreInstalledAppsEnabled" /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>39</Order>
+					<Path>reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "PreInstalledAppsEverEnabled" /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>40</Order>
+					<Path>reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "SilentInstalledAppsEnabled" /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>41</Order>
+					<Path>reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "SoftLandingEnabled" /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>42</Order>
+					<Path>reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "SubscribedContentEnabled" /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>43</Order>
+					<Path>reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "SubscribedContent-310093Enabled" /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>44</Order>
+					<Path>reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "SubscribedContent-338387Enabled" /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>45</Order>
+					<Path>reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "SubscribedContent-338388Enabled" /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>46</Order>
+					<Path>reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "SubscribedContent-338389Enabled" /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>47</Order>
+					<Path>reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "SubscribedContent-338393Enabled" /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>48</Order>
+					<Path>reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "SubscribedContent-353698Enabled" /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>49</Order>
+					<Path>reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "SystemPaneSuggestionsEnabled" /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>50</Order>
+					<Path>reg.exe unload "HKU\DefaultUser"</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>51</Order>
+					<Path>reg.exe add "HKLM\Software\Policies\Microsoft\Windows\CloudContent" /v "DisableWindowsConsumerFeatures" /t REG_DWORD /d 0 /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>52</Order>
+					<Path>reg.exe load "HKU\DefaultUser" "C:\Users\Default\NTUSER.DAT"</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>53</Order>
+					<Path>reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\Runonce" /v "ClassicContextMenu" /t REG_SZ /d "reg.exe add \"HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32\" /ve /f" /f</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>54</Order>
+					<Path>reg.exe unload "HKU\DefaultUser"</Path>
+				</RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>55</Order>
+					<Path>cmd.exe /c "powershell.exe -NoProfile -Command "Get-Content -LiteralPath 'C:\Windows\Setup\Scripts\unattend-01.ps1' -Raw | Invoke-Expression;" &gt;&gt;"C:\Windows\Setup\Scripts\unattend-01.log" 2&gt;&amp;1"</Path>
+				</RunSynchronousCommand>
+			</RunSynchronous>
+		</component>
+		<component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+			<ComputerName>GAMING</ComputerName>
+		</component>
+	</settings>
+	<settings pass="auditSystem"></settings>
+	<settings pass="auditUser"></settings>
+	<settings pass="oobeSystem">
+		<component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+			<InputLocale>0407:00000407</InputLocale>
+			<SystemLocale>de-DE</SystemLocale>
+			<UILanguage>en-US</UILanguage>
+			<UserLocale>de-DE</UserLocale>
+		</component>
+		<component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+			<UserAccounts>
+				<LocalAccounts>
+					<LocalAccount wcm:action="add">
+						<Name>jens</Name>
+						<Group>Administrators</Group>
+						<Password>
+							<Value>jens</Value>
+							<PlainText>true</PlainText>
+						</Password>
+					</LocalAccount>
+				</LocalAccounts>
+			</UserAccounts>
+			<AutoLogon>
+				<Username>jens</Username>
+				<Enabled>true</Enabled>
+				<LogonCount>1</LogonCount>
+				<Password>
+					<Value>jens</Value>
+					<PlainText>true</PlainText>
+				</Password>
+			</AutoLogon>
+			<OOBE>
+				<ProtectYourPC>3</ProtectYourPC>
+				<HideEULAPage>true</HideEULAPage>
+				<HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
+			</OOBE>
+			<FirstLogonCommands>
+				<SynchronousCommand wcm:action="add">
+					<Order>1</Order>
+					<CommandLine>reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v AutoLogonCount /t REG_DWORD /d 0 /f</CommandLine>
+				</SynchronousCommand>
+				<SynchronousCommand wcm:action="add">
+					<Order>2</Order>
+					<CommandLine>cmd.exe /c "powershell.exe -NoProfile -Command "Get-Content -LiteralPath 'C:\Windows\Setup\Scripts\unattend-02.ps1' -Raw | Invoke-Expression;" &gt;&gt;"C:\Windows\Setup\Scripts\unattend-02.log" 2&gt;&amp;1"</CommandLine>
+				</SynchronousCommand>
+			</FirstLogonCommands>
+		</component>
+	</settings>
+	<Extensions xmlns="https://schneegans.de/windows/unattend-generator/">
+		<ExtractScript>
+param(
+    [xml] $Document
+);
+
+$scriptsDir = 'C:\Windows\Setup\Scripts\';
+foreach( $file in $Document.unattend.Extensions.File ) {
+    $path = [System.Environment]::ExpandEnvironmentVariables(
+        $file.GetAttribute( 'path' )
+    );
+    if( $path.StartsWith( $scriptsDir ) ) {
+        mkdir -Path $scriptsDir -ErrorAction 'SilentlyContinue';
+    }
+    $encoding = switch( [System.IO.Path]::GetExtension( $path ) ) {
+        { $_ -in '.ps1', '.xml' } { [System.Text.Encoding]::UTF8; }
+        { $_ -in '.reg', '.vbs', '.js' } { [System.Text.UnicodeEncoding]::new( $false, $true ); }
+        default { [System.Text.Encoding]::Default; }
+    };
+    [System.IO.File]::WriteAllBytes( $path, ( $encoding.GetPreamble() + $encoding.GetBytes( $file.InnerText.Trim() ) ) );
+}
+		</ExtractScript>
+		<File path="C:\Windows\Temp\remove-packages.ps1">
+$selectors = @(
+	'Microsoft.Microsoft3DViewer';
+	'Microsoft.BingSearch';
+	'Microsoft.WindowsCamera';
+	'Clipchamp.Clipchamp';
+	'Microsoft.WindowsAlarms';
+	'Microsoft.549981C3F5F10';
+	'Microsoft.Windows.DevHome';
+	'MicrosoftCorporationII.MicrosoftFamily';
+	'Microsoft.WindowsFeedbackHub';
+	'Microsoft.GetHelp';
+	'Microsoft.Getstarted';
+	'microsoft.windowscommunicationsapps';
+	'Microsoft.WindowsMaps';
+	'Microsoft.BingNews';
+	'Microsoft.WindowsNotepad';
+	'Microsoft.MicrosoftOfficeHub';
+	'Microsoft.Office.OneNote';
+	'Microsoft.OutlookForWindows';
+	'Microsoft.Paint';
+	'Microsoft.MSPaint';
+	'Microsoft.People';
+	'Microsoft.Windows.Photos';
+	'Microsoft.PowerAutomateDesktop';
+	'MicrosoftCorporationII.QuickAssist';
+	'Microsoft.SkypeApp';
+	'Microsoft.ScreenSketch';
+	'Microsoft.MicrosoftSolitaireCollection';
+	'Microsoft.MicrosoftStickyNotes';
+	'MSTeams';
+	'Microsoft.Todos';
+	'Microsoft.WindowsSoundRecorder';
+	'Microsoft.BingWeather';
+	'Microsoft.YourPhone';
+	'Microsoft.ZuneMusic';
+	'Microsoft.ZuneVideo';
+);
+$getCommand = { Get-AppxProvisionedPackage -Online; };
+$filterCommand = { $_.DisplayName -eq $selector; };
+$removeCommand = {
+  [CmdletBinding()]
+  param(
+    [Parameter( Mandatory, ValueFromPipeline )]
+    $InputObject
+  );
+  process {
+    $InputObject | Remove-AppxProvisionedPackage -AllUsers -Online -ErrorAction 'Continue';
+  }
+};
+$type = 'Package';
+$logfile = 'C:\Windows\Temp\remove-packages.log';
+&amp; {
+	$installed = &amp; $getCommand;
+	foreach( $selector in $selectors ) {
+		$result = [ordered] @{
+			Selector = $selector;
+		};
+		$found = $installed | Where-Object -FilterScript $filterCommand;
+		if( $found ) {
+			$result.Output = $found | &amp; $removeCommand;
+			if( $? ) {
+				$result.Message = "$type removed.";
+			} else {
+				$result.Message = "$type not removed.";
+				$result.Error = $Error[0];
+			}
+		} else {
+			$result.Message = "$type not installed.";
+		}
+		$result | ConvertTo-Json -Depth 3 -Compress;
+	}
+} *&gt;&amp;1 &gt;&gt; $logfile;
+		</File>
+		<File path="C:\Windows\Temp\remove-caps.ps1">
+$selectors = @(
+	'Browser.InternetExplorer';
+	'MathRecognizer';
+	'Microsoft.Windows.Notepad';
+	'OpenSSH.Client';
+	'Microsoft.Windows.MSPaint';
+	'App.Support.QuickAssist';
+	'Microsoft.Windows.SnippingTool';
+	'App.StepsRecorder';
+	'Media.WindowsMediaPlayer';
+	'Microsoft.Windows.WordPad';
+);
+$getCommand = { Get-WindowsCapability -Online; };
+$filterCommand = { ($_.Name -split '~')[0] -eq $selector; };
+$removeCommand = {
+  [CmdletBinding()]
+  param(
+    [Parameter( Mandatory, ValueFromPipeline )]
+    $InputObject
+  );
+  process {
+    $InputObject | Remove-WindowsCapability -Online -ErrorAction 'Continue';
+  }
+};
+$type = 'Capability';
+$logfile = 'C:\Windows\Temp\remove-caps.log';
+&amp; {
+	$installed = &amp; $getCommand;
+	foreach( $selector in $selectors ) {
+		$result = [ordered] @{
+			Selector = $selector;
+		};
+		$found = $installed | Where-Object -FilterScript $filterCommand;
+		if( $found ) {
+			$result.Output = $found | &amp; $removeCommand;
+			if( $? ) {
+				$result.Message = "$type removed.";
+			} else {
+				$result.Message = "$type not removed.";
+				$result.Error = $Error[0];
+			}
+		} else {
+			$result.Message = "$type not installed.";
+		}
+		$result | ConvertTo-Json -Depth 3 -Compress;
+	}
+} *&gt;&amp;1 &gt;&gt; $logfile;
+		</File>
+		<File path="C:\Windows\Temp\remove-features.ps1">
+$selectors = @(
+	'Microsoft-SnippingTool';
+);
+$getCommand = { Get-WindowsOptionalFeature -Online; };
+$filterCommand = { $_.FeatureName -eq $selector; };
+$removeCommand = {
+  [CmdletBinding()]
+  param(
+    [Parameter( Mandatory, ValueFromPipeline )]
+    $InputObject
+  );
+  process {
+    $InputObject | Disable-WindowsOptionalFeature -Online -Remove -NoRestart -ErrorAction 'Continue';
+  }
+};
+$type = 'Feature';
+$logfile = 'C:\Windows\Temp\remove-features.log';
+&amp; {
+	$installed = &amp; $getCommand;
+	foreach( $selector in $selectors ) {
+		$result = [ordered] @{
+			Selector = $selector;
+		};
+		$found = $installed | Where-Object -FilterScript $filterCommand;
+		if( $found ) {
+			$result.Output = $found | &amp; $removeCommand;
+			if( $? ) {
+				$result.Message = "$type removed.";
+			} else {
+				$result.Message = "$type not removed.";
+				$result.Error = $Error[0];
+			}
+		} else {
+			$result.Message = "$type not installed.";
+		}
+		$result | ConvertTo-Json -Depth 3 -Compress;
+	}
+} *&gt;&amp;1 &gt;&gt; $logfile;
+		</File>
+		<File path="C:\Users\Default\AppData\Local\Microsoft\Windows\Shell\LayoutModification.xml"><![CDATA[
+<LayoutModificationTemplate Version="1" xmlns="http://schemas.microsoft.com/Start/2014/LayoutModification">
+	<LayoutOptions StartTileGroupCellWidth="6" />
+	<DefaultLayoutOverride>
+		<StartLayoutCollection>
+			<StartLayout GroupCellWidth="6" xmlns="http://schemas.microsoft.com/Start/2014/FullDefaultLayout" />
+		</StartLayoutCollection>
+	</DefaultLayoutOverride>
+</LayoutModificationTemplate>
+		]]></File>
+		<File path="C:\Windows\Setup\Scripts\unattend-01.ps1">
+# Disable Hibernate
+function create_registry_key {
+
+  if (!(Test-Path $registryPath)) {
+    New-Item -Path $registryPath -Force | Out-Null
+    New-ItemProperty -Name $name -Path $registrypath -Force -PropertyType $registry_type -Value $value | Out-Null
+  }
+  else {
+    New-ItemProperty -Name $name -Path $registrypath -Force -PropertyType $registry_type -Value $value | Out-Null | Out-Null
+  }
+}
+
+
+Write-Host "Disable Hibernate" -ForegroundColor Cyan
+powercfg.exe -h off
+$registryPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Power"
+$Name = "HibernateEnabled"
+$value = "0"
+$registry_type = "DWORD"
+
+# Enable ICMP ping
+$firewallRuleName = "File and Printer Sharing (Echo Request - ICMPv4-In)"
+
+# Check if the firewall rule exists
+$existingRule = Get-NetFirewallRule | Where-Object { $_.DisplayName -eq $firewallRuleName }
+
+if ($existingRule -eq $null) {
+    Write-Host "Firewall rule not found: $firewallRuleName"
+} else {
+    # Enable the firewall rule
+    Enable-NetFirewallRule -DisplayName $firewallRuleName
+    Write-Host "Firewall rule '$firewallRuleName' has been enabled."
+}
+
+  # Enable the Ultimate Performance power plan
+  powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61
+  
+  # Set the Ultimate Performance power plan as active
+  powercfg -setactive e9a42b02-d5df-448d-aa00-03f14749eb61
+
+# Uninstall uselsee Windows optional features
+Write-Host "Disable Windows Optional Features" -ForegroundColor Cyan
+Disable-WindowsOptionalFeature -Online -NoRestart -FeatureName WindowsMediaPlayer | Out-Null
+Disable-WindowsOptionalFeature –Online -NoRestart -FeatureName SearchEngine-Client-Package | Out-Null
+
+# Disable Defender Auto Sample Submission
+Set-MpPreference -SubmitSamplesConsent 2 -ErrorAction Continue | Out-Null
+
+# List of Windows services to deactivate
+$ServicesToDeactivate = @(
+  "RetailDemo",               # Windows Retail Demo
+  "icssvc",                   # Windows Mobile Hotspot
+  "PhoneSvc",                 # PhoneService
+  "WbioSrvc",                 # Biometric Services
+  "WSearch",                  # Windows Search (sucks anyway)
+  "wisvc",                    # Windows Insider Service
+  "WerSvc",                   # Windows Error Reporting
+  "RemoteRegistry",           # Remote Registry
+  "TabletInputService",       # Touch Keyboard and Handwriting Panel Service
+  "Fax",                      # Windows Fax
+  "DiagTrack",                # Connected User Experiences and Telemetry
+  "MapsBroker"                # Downloaded Maps Manager
+)
+
+
+# Loop through each service and attempt to deactivate it
+foreach ($ServiceName in $ServicesToDeactivate) {
+  try {
+    # Get the service, and if it exists, set its startup type to Disabled and stop it
+    $Service = Get-Service -Name $ServiceName -ErrorAction Stop
+    Write-Host "Deactivating service $ServiceName" -ForegroundColor Cyan
+    $Service | Set-Service -StartupType Disabled -PassThru | Stop-Service -Force
+  } catch {
+    # Handle the case where the service does not exist
+    Write-Host "$ServiceName does not exist" -ForegroundColor Yellow
+  }
+}
+
+# Disables Windows Consumer Features Like App Promotions etc.
+reg.exe add "HKLM\Software\Policies\Microsoft\Windows\CloudContent" /v "DisableWindowsConsumerFeatures" /t REG_DWORD /d 0 /f
+
+# Disables News and Interests
+reg.exe add "HKLM\SOFTWARE\Policies\Microsoft\Dsh" /v AllowNewsAndInterests /t REG_DWORD /d 0 /f
+
+# Disables Windows Consumer Features Like App Promotions etc.
+reg.exe add "HKLM\Software\Policies\Microsoft\Windows\CloudContent" /v "DisableWindowsConsumerFeatures" /t REG_DWORD /d 0 /f
+
+# Disables Location Tracking
+reg.exe add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location" /v Value /t REG_SZ /d Deny /f
+reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}" /v SensorPermissionState /t REG_DWORD /d 0 /f
+reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration" /v Status /t REG_DWORD /d 0 /f
+reg.exe add "HKLM\SYSTEM\Maps" /v AutoUpdateEnabled /t REG_DWORD /d 0 /f
+
+# Disables Telemetry
+reg.exe add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" /v AllowTelemetry /t REG_DWORD /d 0 /f
+reg.exe add "HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection" /v AllowTelemetry /t REG_DWORD /d 0 /f
+
+  
+  # Disable Scheduled Tasks
+  $scheduledTasks = @(
+      "Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser",
+      "Microsoft\Windows\Application Experience\ProgramDataUpdater",
+      "Microsoft\Windows\Autochk\Proxy",
+      "Microsoft\Windows\Customer Experience Improvement Program\Consolidator",
+      "Microsoft\Windows\Customer Experience Improvement Program\UsbCeip",
+      "Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector",
+      "Microsoft\Windows\Feedback\Siuf\DmClient",
+      "Microsoft\Windows\Feedback\Siuf\DmClientOnScenarioDownload",
+      "Microsoft\Windows\Windows Error Reporting\QueueReporting",
+      "Microsoft\Windows\Application Experience\MareBackup",
+      "Microsoft\Windows\Application Experience\StartupAppTask",
+      "Microsoft\Windows\Application Experience\PcaPatchDbTask",
+      "Microsoft\Windows\Maps\MapsUpdateTask"
+  )
+  foreach ($task in $scheduledTasks) {
+      schtasks /Change /TN $task /Disable
+  }
+
+# Disables Windows Ink Workspace
+reg.exe add "HKLM\SOFTWARE\Policies\Microsoft\WindowsInkWorkspace" /v AllowWindowsInkWorkspace /t REG_DWORD /d 0 /f
+
+# Disables Feedback Notifications
+reg.exe add "HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection" /v DoNotShowFeedbackNotifications /t REG_DWORD /d 1 /f
+
+# Disables the Advertising ID for All Users
+reg.exe add "HKLM\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo" /v DisabledByGroupPolicy /t REG_DWORD /d 1 /f
+
+# Disables Windows Error Reporting
+reg.exe add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v Disabled /t REG_DWORD /d 1 /f
+
+# Disables Delivery Optimization
+reg.exe add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" /v DODownloadMode /t REG_DWORD /d 0 /f
+
+# Disables Remote Assistance
+reg.exe add "HKLM\SYSTEM\CurrentControlSet\Control\Remote Assistance" /v fAllowToGetHelp /t REG_DWORD /d 0 /f
+
+# Search Windows Update for Drivers First
+reg.exe add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching" /v SearchOrderConfig /t REG_DWORD /d 1 /f
+
+# Gives Multimedia Applications like Games and Video Editing a Higher Priority
+reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" /v SystemResponsiveness /t REG_DWORD /d 0 /f
+reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" /v NetworkThrottlingIndex /t REG_DWORD /d 4294967295 /f
+
+# Controls whether the memory page file is cleared at shutdown. Value 0 means it will not be cleared, speeding up shutdown.
+reg.exe add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v ClearPageFileAtShutdown /t REG_DWORD /d 0 /f
+
+# Enables NDU (Network Diagnostic Usage) Service on Startup
+reg.exe add "HKLM\SYSTEM\ControlSet001\Services\Ndu" /v Start /t REG_DWORD /d 2 /f
+
+# Increases IRP stack size to 30 for the LanmanServer service to Improve Network Performance and Stability
+reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" /v IRPStackSize /t REG_DWORD /d 30 /f
+
+# Hides the Meet Now Button on the Taskbar
+reg.exe add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v HideSCAMeetNow /t REG_DWORD /d 1 /f
+
+# Gives Graphics Cards a Higher Priority for Gaming
+reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games" /v "GPU Priority" /t REG_DWORD /d 8 /f
+
+# Gives the CPU a Higher Priority for Gaming
+reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games" /v Priority /t REG_DWORD /d 6 /f
+
+# Gives Games a higher priority in the system's scheduling
+reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games" /v "Scheduling Category" /t REG_SZ /d "High" /f
+
+# Fix Managed by your organization in Edge
+reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f
+
+# Set Registry Keys to Disable Wifi-Sense
+reg.exe add "HKLM\Software\Microsoft\PolicyManager\default\WiFi\AllowWiFiHotSpotReporting" /v Value /t REG_DWORD /d 0 /f
+reg.exe add "HKLM\Software\Microsoft\PolicyManager\default\WiFi\AllowAutoConnectToWiFiSenseHotspots" /v Value /t REG_DWORD /d 0 /f
+
+# Disables Storage Sense
+reg.exe add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy" /v 01 /t REG_DWORD /d 0 /f
+
+# DELETES SCHEDULED TASKS REGISTRY KEYS
+# Deleting Application Compatibility Appraiser
+reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{0600DD45-FAF2-4131-A006-0B17509B9F78}" /f
+# Deleting Customer Experience Improvement Program
+reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{4738DE7A-BCC1-4E2D-B1B0-CADB044BFA81}" /f
+reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{6FAC31FA-4A85-4E64-BFD5-2154FF4594B3}" /f
+reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{FC931F16-B50A-472E-B061-B6F79A71EF59}" /f
+# Deleting Program Data Updater
+reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{0671EB05-7D95-4153-A32B-1426B9FE61DB}" /f
+# Deleting autochk proxy
+reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{87BF85F4-2CE1-4160-96EA-52F554AA28A2}" /f
+reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{8A9C643C-3D74-4099-B6BD-9C6D170898B1}" /f
+# Deleting QueueReporting
+reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{E3176A65-4E44-4ED3-AA73-3283660ACB9C}" /f
+
+# Disables Cortana
+reg.exe add "HKLM\Software\Policies\Microsoft\Windows\Windows Search" /v AllowCortana /t REG_DWORD /d 0 /f
+
+# Disables Hibernation
+reg.exe add "HKLM\System\CurrentControlSet\Control\Session Manager\Power" /v HibernateEnabled /t REG_DWORD /d 0 /f
+reg.exe add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" /v ShowHibernateOption /t REG_DWORD /d 0 /f
+
+function create_registry_key {
+
+  if (!(Test-Path $registryPath)) {
+    New-Item -Path $registryPath -Force | Out-Null
+    New-ItemProperty -Name $name -Path $registrypath -Force -PropertyType $registry_type -Value $value | Out-Null
+  }
+  else {
+    New-ItemProperty -Name $name -Path $registrypath -Force -PropertyType $registry_type -Value $value | Out-Null | Out-Null
+  }
+}
+
+
+#Disable Windows 10 fast boot
+$registryPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power"
+$Name = "HiberbootEnabled"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+#Remove Windows desktop background image
+$registryPath = "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\Wallpapers"
+$Name = "BackgroundType"
+$value = "1"
+$registry_type = "DWORD"
+create_registry_key
+
+#Disable Windows Hello login (Enables the option to allow the automatic login without a password to Windows in netplwiz. Useful if you have a Bitlocker password anyway)
+$registryPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device"
+$Name = "DevicePasswordLessBuildVersion"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+#Disable Windows login background image
+$registryPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization"
+$Name = "Nolockscreen"
+$value = "1"
+$registry_type = "DWORD"
+create_registry_key
+
+#Disable GameDVR and Game Bar
+$registryPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR"
+$Name = "GameDVR_Enabled"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+#Disable Windows Insider Error Message Reporting
+$registryPath = "HKLM:\SOFTWARE\Microsoft\WindowsSelfHost\UI\Visibility"
+$Name = "DiagnosticErrorText"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+#Disable Windows Logon Background Image
+$registryPath = "HKLM:\Software\Policies\Microsoft\Windows\System"
+$Name = "DisableLogonBackgroundImage"
+$value = "1"
+$registry_type = "DWORD"
+create_registry_key
+
+
+#Add lockscreen timeout settings to power saving options
+$registryPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\7516b95f-f776-4464-8c53-06167f40cc99\8EC4B3A5-6868-48c2-BE75-4F3044BE88A7"
+$Name = "Attributes"
+$value = "2"
+$registry_type = "DWORD"
+create_registry_key
+
+#Enable verbose status messages during Windows loading screen
+$registryPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+$Name = "verbosestatus"
+$value = "1"
+$registry_type = "DWORD"
+create_registry_key
+
+#Enable GPU hardware scheduling
+$registryPath = "HKLM:\SYSTEM\CurrentControlSet\Control\GraphicsDrivers"
+$Name = "HwSchMode"
+$value = "2"
+$registry_type = "DWORD"
+create_registry_key
+
+#Enable GPU variable refresh rate
+$registryPath = "HKLM:\SYSTEM\CurrentControlSet\Control\GraphicsDrivers"
+$Name = "DirectXUserGlobalSettings"
+$value = "VRROptimizeEnable=1;"
+$registry_type = "String"
+create_registry_key
+
+  # Set Services to Manual
+  Write-Output 'Set Services to Manual: Turns a bunch of system services to manual that do not need to be running all the time.'
+  Set-Service -Name 'AJRouter' -StartupType Disabled -ErrorAction Continue
+  Set-Service -Name 'ALG' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'AppIDSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'AppMgmt' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'AppReadiness' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'AppVClient' -StartupType Disabled -ErrorAction Continue
+  Set-Service -Name 'AppXSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'Appinfo' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'AssignedAccessManagerSvc' -StartupType Disabled -ErrorAction Continue
+  Set-Service -Name 'AudioEndpointBuilder' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'AudioSrv' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'Audiosrv' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'AxInstSV' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'BDESVC' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'BFE' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'BITS' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'BTAGService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'BcastDVRUserService_*' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'BrokerInfrastructure' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'Browser' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'BthAvctpSvc' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'BthHFSrv' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'CDPSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'CDPUserSvc_*' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'COMSysApp' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'CaptureService_*' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'CertPropSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'ClipSVC' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'ConsentUxUserSvc_*' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'CoreMessagingRegistrar' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'CredentialEnrollmentManagerUserSvc_*' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'CryptSvc' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'CscService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'DPS' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'DcomLaunch' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'DcpSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'DevQueryBroker' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'DeviceAssociationBrokerSvc_*' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'DeviceAssociationService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'DeviceInstall' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'DevicePickerUserSvc_*' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'DevicesFlowUserSvc_*' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'Dhcp' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'DiagTrack' -StartupType Disabled -ErrorAction Continue
+  Set-Service -Name 'DialogBlockingService' -StartupType Disabled -ErrorAction Continue
+  Set-Service -Name 'DispBrokerDesktopSvc' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'DisplayEnhancementService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'DmEnrollmentSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'Dnscache' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'DoSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'DsSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'DsmSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'DusmSvc' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'EFS' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'EapHost' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'EntAppSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'EventLog' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'EventSystem' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'FDResPub' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'Fax' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'FontCache' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'FrameServer' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'FrameServerMonitor' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'GraphicsPerfSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'HomeGroupListener' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'HomeGroupProvider' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'HvHost' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'IEEtwCollectorService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'IKEEXT' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'InstallService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'InventorySvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'IpxlatCfgSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'KeyIso' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'KtmRm' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'LSM' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'LanmanServer' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'LanmanWorkstation' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'LicenseManager' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'LxpSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'MSDTC' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'MSiSCSI' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'MapsBroker' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'McpManagementService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'MessagingService_*' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'MicrosoftEdgeElevationService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'MixedRealityOpenXRSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'MpsSvc' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'MsKeyboardFilter' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'NPSMSvc_*' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'NaturalAuthentication' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'NcaSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'NcbService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'NcdAutoSetup' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'NetSetupSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'NetTcpPortSharing' -StartupType Disabled -ErrorAction Continue
+  Set-Service -Name 'Netlogon' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'Netman' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'NgcCtnrSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'NgcSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'NlaSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'OneSyncSvc_*' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'P9RdrService_*' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'PNRPAutoReg' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'PNRPsvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'PcaSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'PeerDistSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'PenService_*' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'PerfHost' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'PhoneSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'PimIndexMaintenanceSvc_*' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'PlugPlay' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'PolicyAgent' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'Power' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'PrintNotify' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'PrintWorkflowUserSvc_*' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'ProfSvc' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'PushToInstall' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'QWAVE' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'RasAuto' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'RasMan' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'RemoteAccess' -StartupType Disabled -ErrorAction Continue
+  Set-Service -Name 'RemoteRegistry' -StartupType Disabled -ErrorAction Continue
+  Set-Service -Name 'RetailDemo' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'RmSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'RpcEptMapper' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'RpcLocator' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'RpcSs' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'SCPolicySvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'SCardSvr' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'SDRSVC' -StartupType Manual -ErrorAction Continue 
+  Set-Service -Name 'SEMgrSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'SENS' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'SNMPTRAP' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'SNMPTrap' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'SSDPSRV' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'SamSs' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'ScDeviceEnum' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'Schedule' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'SecurityHealthService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'Sense' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'SensorDataService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'SensorService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'SensrSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'SessionEnv' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'SgrmBroker' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'SharedAccess' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'SharedRealitySvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'ShellHWDetection' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'SmsRouter' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'Spooler' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'SstpSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'StateRepository' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'StiSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'StorSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'SysMain' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'SystemEventsBroker' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'TabletInputService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'TapiSrv' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'TermService' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'TextInputManagementService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'Themes' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'TieringEngineService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'TimeBroker' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'TimeBrokerSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'TokenBroker' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'TrkWks' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'TroubleshootingSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'TrustedInstaller' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'UI0Detect' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'UdkUserSvc_*' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'UevAgentService' -StartupType Disabled -ErrorAction Continue
+  Set-Service -Name 'UmRdpService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'UnistoreSvc_*' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'UserDataSvc_*' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'UserManager' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'UsoSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'VGAuthService' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'VMTools' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'VSS' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'VacSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'VaultSvc' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'W32Time' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WEPHOSTSVC' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WFDSConMgrSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WMPNetworkSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WManSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WPDBusEnum' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WSService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WSearch' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WaaSMedicSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WalletService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WarpJITSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WbioSrvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'Wcmsvc' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'WcsPlugInService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WdNisSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WdiServiceHost' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WdiSystemHost' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WebClient' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'Wecsvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WerSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WiaRpc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WinDefend' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'WinHttpAutoProxySvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WinRM' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'Winmgmt' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'WlanSvc' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'WpcMonSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WpnService' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'WpnUserService_*' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'WwanSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'XblAuthManager' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'XblGameSave' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'XboxGipSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'XboxNetApiSvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'autotimesvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'bthserv' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'camsvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'cbdhsvc_*' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'cloudidsvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'dcsvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'defragsvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'diagnosticshub.standardcollector.service' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'diagsvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'dmwappushservice' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'dot3svc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'edgeupdate' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'edgeupdatem' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'embeddedmode' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'fdPHost' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'fhsvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'gpsvc' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'hidserv' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'icssvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'iphlpsvc' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'lfsvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'lltdsvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'lmhosts' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'mpssvc' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'msiserver' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'netprofm' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'nsi' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'p2pimsvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'p2psvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'perceptionsimulation' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'pla' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'seclogon' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'shpamsvc' -StartupType Disabled -ErrorAction Continue
+  Set-Service -Name 'smphost' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'spectrum' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'sppsvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'ssh-agent' -StartupType Disabled -ErrorAction Continue
+  Set-Service -Name 'svsvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'swprv' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'tiledatamodelsvc' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'tzautoupdate' -StartupType Disabled -ErrorAction Continue
+  Set-Service -Name 'uhssvc' -StartupType Disabled -ErrorAction Continue
+  Set-Service -Name 'upnphost' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'vds' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'vm3dservice' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'vmicguestinterface' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'vmicheartbeat' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'vmickvpexchange' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'vmicrdv' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'vmicshutdown' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'vmictimesync' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'vmicvmsession' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'vmicvss' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'vmvss' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'wbengine' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'wcncsvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'webthreatdefsvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'webthreatdefusersvc_*' -StartupType Automatic -ErrorAction Continue
+  Set-Service -Name 'wercplsupport' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'wisvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'wlidsvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'wlpasvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'wmiApSrv' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'workfolderssvc' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'wuauserv' -StartupType Manual -ErrorAction Continue
+  Set-Service -Name 'wudfsvc' -StartupType Manual -ErrorAction Continue
+
+#New-Item -ItemType File -Path 'C:\systemcontext.txt'
+		</File>
+		<File path="C:\Windows\Setup\Scripts\unattend-02.ps1">
+&lt;# Disable unnecessary log files and writes to SSD
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#&gt;
+Write-Host "Disable unnecessary log files and writes to SSD" -ForegroundColor Cyan
+
+function create_dummyfolder_file {
+  param($CheckPath)
+  if ((Test-Path -LiteralPath $CheckPath) -ne $true) { 
+    New-Item -Path $CheckPath -ItemType File -force -ea SilentlyContinue | Out-Null; 
+    Write-Host "$CheckPath" -BackgroundColor Black -ForegroundColor Green -NoNewline; 
+    Write-Host " was created." -ForegroundColor White -BackgroundColor Black 
+  } 
+  else { 
+    Write-Host "$CheckPath" -BackgroundColor Black -ForegroundColor Yellow -NoNewline; 
+    Write-Host " already exists." -ForegroundColor White -BackgroundColor Black 
+  }
+}
+
+$CheckPath = '~\AppData\LocalLow\Deo VR'
+create_dummyfolder_file -CheckPath $CheckPath
+
+$CheckPath = '~\AppData\LocalLow\DeoVR'
+create_dummyfolder_file -CheckPath $CheckPath
+
+&lt;# Install winget and software
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#&gt;
+  winget.exe install -e --id 7zip.7zip
+  winget.exe install -e --id Argotronic.ArgusMonitor
+  winget.exe install -e --id Discord.Discord
+  winget.exe install -e --id Elgato.StreamDeck
+  winget.exe install -e --id Git.Git
+  winget.exe install -e --id Google.Chrome
+  winget.exe install -e --id Logitech.GHUB
+  winget.exe install -e --id Microsoft.Edge
+  winget.exe install -e --id Microsoft.PowerShell
+  winget.exe install -e --id Microsoft.VisualStudioCode
+  winget.exe install -e --id Microsoft.WindowsTerminal
+  winget.exe install -e --id Mozilla.Firefox
+  winget.exe install -e --id Nevcairiel.LAVFilters
+  winget.exe install -e --id OpenWhisperSystems.Signal
+  winget.exe install -e --id Spotify.Spotify
+  winget.exe install -e --id VideoLAN.VLC
+
+
+# Hides the Meet Now Button on the Taskbar
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v HideSCAMeetNow /t REG_DWORD /d 1 /f
+
+# Disables Bing Search in Start Menu
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\Explorer" /v DisableSearchBoxSuggestions /t REG_DWORD /d 1 /f
+
+# Disables Mouse Acceleration
+reg.exe add "HKEY_CURRENT_USER\Control Panel\Mouse" /v MouseSpeed /t REG_SZ /d "0" /f
+reg.exe add "HKEY_CURRENT_USER\Control Panel\Mouse" /v MouseThreshold1 /t REG_SZ /d "0" /f
+reg.exe add "HKEY_CURRENT_USER\Control Panel\Mouse" /v MouseThreshold2 /t REG_SZ /d "0" /f
+
+# Disables Sticky Keys
+reg.exe add "HKEY_CURRENT_USER\Control Panel\Accessibility\StickyKeys" /v Flags /t REG_SZ /d "506" /f
+reg.exe add "HKEY_CURRENT_USER\Control Panel\Accessibility\StickyKeys" /v HotkeyFlags /t REG_SZ /d "58" /f
+
+# Disables Snap Assist Flyout
+reg.exe add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v SnapAssist /t REG_DWORD /d 0 /f
+
+# Enables Show File Extensions
+reg.exe add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v HideFileExt /t REG_DWORD /d 0 /f
+
+# Enables Dark Mode
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v AppsUseLightTheme /t REG_DWORD /d 0 /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v ColorPrevalence /t REG_DWORD /d 0 /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v EnableTransparency /t REG_DWORD /d 1 /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v SystemUsesLightTheme /t REG_DWORD /d 0 /f
+
+
+# Restore Windows Photo Viewer and Set as Default Program for Image Files
+# Restore Windows Photo Viewer
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Classes\.bmp" /ve /d "PhotoViewer.FileAssoc.Tiff" /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Classes\.cr2" /ve /d "PhotoViewer.FileAssoc.Tiff" /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Classes\.dib" /ve /d "PhotoViewer.FileAssoc.Tiff" /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Classes\.gif" /ve /d "PhotoViewer.FileAssoc.Tiff" /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Classes\.ico" /ve /d "PhotoViewer.FileAssoc.Tiff" /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Classes\.jfif" /ve /d "PhotoViewer.FileAssoc.Tiff" /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Classes\.jpe" /ve /d "PhotoViewer.FileAssoc.Tiff" /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Classes\.jpeg" /ve /d "PhotoViewer.FileAssoc.Tiff" /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Classes\.jpg" /ve /d "PhotoViewer.FileAssoc.Tiff" /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Classes\.jxr" /ve /d "PhotoViewer.FileAssoc.Tiff" /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Classes\.png" /ve /d "PhotoViewer.FileAssoc.Tiff" /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Classes\.tif" /ve /d "PhotoViewer.FileAssoc.Tiff" /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Classes\.tiff" /ve /d "PhotoViewer.FileAssoc.Tiff" /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Classes\.wdp" /ve /d "PhotoViewer.FileAssoc.Tiff" /f
+# Create Relevant File Associations
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.bmp\OpenWithProgids" /v "PhotoViewer.FileAssoc.Tiff" /t REG_NONE /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.cr2\OpenWithProgids" /v "PhotoViewer.FileAssoc.Tiff" /t REG_NONE /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.dib\OpenWithProgids" /v "PhotoViewer.FileAssoc.Tiff" /t REG_NONE /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.gif\OpenWithProgids" /v "PhotoViewer.FileAssoc.Tiff" /t REG_NONE /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.ico\OpenWithProgids" /v "PhotoViewer.FileAssoc.Tiff" /t REG_NONE /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.jfif\OpenWithProgids" /v "PhotoViewer.FileAssoc.Tiff" /t REG_NONE /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.jpe\OpenWithProgids" /v "PhotoViewer.FileAssoc.Tiff" /t REG_NONE /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.jpeg\OpenWithProgids" /v "PhotoViewer.FileAssoc.Tiff" /t REG_NONE /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.jpg\OpenWithProgids" /v "PhotoViewer.FileAssoc.Tiff" /t REG_NONE /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.jxr\OpenWithProgids" /v "PhotoViewer.FileAssoc.Tiff" /t REG_NONE /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.png\OpenWithProgids" /v "PhotoViewer.FileAssoc.Tiff" /t REG_NONE /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.tif\OpenWithProgids" /v "PhotoViewer.FileAssoc.Tiff" /t REG_NONE /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.tiff\OpenWithProgids" /v "PhotoViewer.FileAssoc.Tiff" /t REG_NONE /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.wdp\OpenWithProgids" /v "PhotoViewer.FileAssoc.Tiff" /t REG_NONE /f
+
+# Disables Windows Recall on Copilot+ PC - Credit Britec09
+reg.exe add "HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\WindowsAI" /f
+reg.exe add "HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\WindowsAI" /v "DisableAIDataAnalysis" /t REG_DWORD /d 1 /f
+reg.exe add "HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\Windows AI" /v "TurnOffSavingSnapshots" /t REG_DWORD /d 1 /f
+
+# Disables Wallpaper JPEG Quality Reduction in Windows 10
+reg.exe add "HKEY_CURRENT_USER\Control Panel\Desktop" /v JPEGImportQuality /t REG_DWORD /d 100 /f
+
+# Hides and Removes News and Interests from PC and Taskbar
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Feeds" /v ShellFeedsTaskbarViewMode /t REG_DWORD /d 2 /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Feeds" /v ShellFeedsEnabled /t REG_DWORD /d 0 /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\Windows Feeds" /v EnableFeeds /t REG_DWORD /d 0 /f
+
+# Disables Location Services
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Privacy" /v LocationServicesEnabled /t REG_DWORD /d 0 /f
+
+# Disables Input Personalization Settings
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Personalization\Settings" /v AcceptedPrivacyPolicy /t REG_DWORD /d 0 /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\InputPersonalization" /v RestrictImplicitTextCollection /t REG_DWORD /d 1 /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\InputPersonalization" /v RestrictImplicitInkCollection /t REG_DWORD /d 1 /f
+
+# Disables Automatic Feedback Sampling
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Feedback" /v AutoSample /t REG_DWORD /d 0 /f
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Feedback" /v ServiceEnabled /t REG_DWORD /d 0 /f
+
+# Disables Recent Documents Tracking
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v Start_TrackDocs /t REG_DWORD /d 0 /f
+
+# Disable "Let websites provide locally relevant content by accessing my language list"
+reg.exe add "HKEY_CURRENT_USER\Control Panel\International\User Profile" /v HttpAcceptLanguageOptOut /t REG_DWORD /d 1 /f
+
+# Disables "Let Windows track app launches to improve Start and search results"
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v Start_TrackProgs /t REG_DWORD /d 0 /f
+
+# Disables Background Apps
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications" /v GlobalUserDisabled /t REG_DWORD /d 1 /f
+
+# Disables App Diagnostics
+reg.exe add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\AppDiagnostics" /v AppDiagnosticsEnabled /t REG_DWORD /d 0 /f
+
+function create_registry_key {
+
+    if (!(Test-Path $registryPath)) {
+      New-Item -Path $registryPath -Force | Out-Null
+      New-ItemProperty -Name $name -Path $registrypath -Force -PropertyType $registry_type -Value $value | Out-Null
+    }
+    else {
+      New-ItemProperty -Name $name -Path $registrypath -Force -PropertyType $registry_type -Value $value | Out-Null | Out-Null
+    }
+  }
+
+$registryPath = "HKCU:\Control Panel\Desktop"
+$Name = "WallPaper"
+$value = ""
+$registry_type = "DWORD"
+create_registry_key
+
+
+#Small Desktop icons
+$registryPath = "HKCU:\Software\Microsoft\Windows\Shell\Bags\1\Desktop"
+$Name = "IconSize"
+$value = "36"
+$registry_type = "DWORD"
+create_registry_key
+
+#Disable Windows spotlight features
+$registryPath = "HKCU:\Software\Policies\Microsoft\Windows\CloudContent"
+$Name = "DisableWindowsSpotlightFeatures"
+$value = "1"
+$registry_type = "DWORD"
+create_registry_key
+
+#Deactivate sound setting communication 'Reduce the volume of other sounds by 80%'
+$registryPath = "HKCU:\Software\Microsoft\Multimedia\Audio"
+$Name = "UserDuckingPreference"
+$value = "3"
+$registry_type = "DWORD"
+create_registry_key
+
+#Explorer launch to "This PC"
+$registryPath = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+$Name = "LaunchTo"
+$value = "1"
+$registry_type = "DWORD"
+create_registry_key
+
+
+#Disable Windows Web Search
+$registryPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search"
+$Name = "BingSearchEnabled"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+
+$registryPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search"
+$Name = "CortanaConsent"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+#Disable enhanced pointer precision
+$registryPath = "HKCU:\Control Panel\Mouse"
+$Name = "MouseSpeed"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+
+$registryPath = "HKCU:\Control Panel\Mouse"
+$Name = "MouseThreshold1"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+
+$registryPath = "HKCU:\Control Panel\Mouse"
+$Name = "MouseThreshold2"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+
+#Enable dark mode
+$registryPath = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize"
+$Name = "AppsUseLightTheme"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+
+#Explorer tweaks
+# Show all taskbar icons
+$registryPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer"
+$Name = "EnableAutoTray"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+
+#Choose "Show hidden files, folders, and drives"
+$registryPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+$Name = "Hidden"
+$value = "1"
+$registry_type = "DWORD"
+create_registry_key
+
+
+#Uncheck "Hide extensions for known file types"
+$registryPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+$Name = "HideFileExt"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+
+#Uncheck "Hide protected operating system files (Recommended)"
+$registryPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+$Name = "ShowSuperHidden"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+
+#ShowCortanaButton
+$registryPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+$Name = "ShowCortanaButton"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+
+#Disable task view button
+$registryPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+$Name = "ShowTaskViewButton"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+
+#Small taskbar icons
+$registryPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+$Name = "TaskbarSmallIcons"
+$value = "1"
+$registry_type = "DWORD"
+create_registry_key
+
+
+#disable background apps
+$registryPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications"
+$Name = "GlobalUserDisabled"
+$value = "1"
+$registry_type = "DWORD"
+create_registry_key
+
+
+#Enable Windows 10 context menu
+$registryPath = "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32"
+$Name = "(Default)"
+$value = ""
+$registry_type = "String"
+create_registry_key
+
+#Show accent color on title bars and windows
+$registryPath = "HKCU:\Software\Microsoft\Windows\DWM"
+$Name = "ColorPrevalence"
+$value = "0"
+$registry_type = "String"
+create_registry_key
+
+
+#Disable ShowRecent file in Explorer
+$registryPath = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer"
+$Name = "ShowRecent"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+
+#Disable ShowFrequent file in Explorer
+$registryPath = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer"
+$Name = "ShowFrequent"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+
+#Enable Nvidia Sharpening
+$registryPath = "HKLM:\SYSTEM\CurrentControlSet\Services\nvlddmkm\FTS"
+$Name = "EnableGR535"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+
+#Disable animations in Windows
+$registryPath = "HKCU:\Control Panel\Desktop\WindowMetrics"
+$Name = "MinAnimate"
+$value = "1"
+$registry_type = "String"
+create_registry_key
+
+
+#Disable transparancey
+$registryPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"
+$Name = "EnableTransparency"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+
+#Disable sticky keys
+$registryPath = "HKCU:\Control Panel\Accessibility\StickyKeys"
+$Name = "Flags"
+$value = "506"
+$registry_type = "DWORD"
+create_registry_key
+
+
+#Taskbar Alignment left
+$registryPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\"
+$Name = "TaskbarAl"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+
+#Disable adverstising id
+$registryPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo"
+$Name = "Enabled"
+$value = "0"
+$registry_type = "DWORD"
+create_registry_key
+
+
+#Disable websites getting access to language list
+$registryPath = "HKCU:\Control Panel\International\User Profile"
+$Name = "HttpAcceptLanguageOptOut"
+$value = "1"
+$registry_type = "DWORD"
+create_registry_key
+
+#New-Item -ItemType File -Path 'C:\usercontext.txt'
+
+# Restart PC to Apply All Changes
+shutdown /r -t 1
+		</File>
+	</Extensions>
+</unattend>
