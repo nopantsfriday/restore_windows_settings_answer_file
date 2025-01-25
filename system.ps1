@@ -568,4 +568,6 @@ create_registry_key
   Set-Service -Name 'wuauserv' -StartupType Manual -ErrorAction Continue
   Set-Service -Name 'wudfsvc' -StartupType Manual -ErrorAction Continue
 
-#New-Item -ItemType File -Path 'C:\systemcontext.txt'
+  Add-WindowsCapability -Online -Name OpenSSH.Client
+
+  #New-Item -ItemType File -Path 'C:\systemcontext.txt'
